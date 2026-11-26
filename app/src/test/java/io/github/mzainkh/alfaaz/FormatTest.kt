@@ -1,7 +1,10 @@
 package io.github.mzainkh.alfaaz
 
+import io.github.mzainkh.alfaaz.ui.NowPlayingLayout.SINGLE
+import io.github.mzainkh.alfaaz.ui.NowPlayingLayout.TWO_PANE
 import io.github.mzainkh.alfaaz.ui.centerDelta
 import io.github.mzainkh.alfaaz.ui.formatTime
+import io.github.mzainkh.alfaaz.ui.nowPlayingLayout
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -21,5 +24,14 @@ class FormatTest {
         assertEquals(250f, centerDelta(700, 100, 0, 1_000))
         // A top content padding of 200 shifts the viewport start to -200.
         assertEquals(0f, centerDelta(250, 100, -200, 800))
+    }
+
+    @Test
+    fun picksTwoPanesForWideOrSidewaysWindows() {
+        assertEquals(SINGLE, nowPlayingLayout(412f, 915f)) // phone, upright
+        assertEquals(TWO_PANE, nowPlayingLayout(915f, 412f)) // phone, sideways
+        assertEquals(TWO_PANE, nowPlayingLayout(600f, 960f)) // small tablet or unfolded phone
+        assertEquals(SINGLE, nowPlayingLayout(412f, 440f)) // half of a split screen
+        assertEquals(SINGLE, nowPlayingLayout(599f, 900f))
     }
 }

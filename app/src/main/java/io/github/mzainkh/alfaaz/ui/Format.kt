@@ -21,3 +21,9 @@ fun formatTime(ms: Long): String {
  */
 fun centerDelta(itemOffset: Int, itemSize: Int, viewportStart: Int, viewportEnd: Int): Float =
     itemOffset + itemSize / 2f - (viewportStart + viewportEnd) / 2f
+
+enum class NowPlayingLayout { SINGLE, TWO_PANE }
+
+/** Side by side on wide windows (tablets, unfolded phones) and on phones turned sideways. */
+fun nowPlayingLayout(widthDp: Float, heightDp: Float): NowPlayingLayout =
+    if (widthDp >= 600f || (widthDp > heightDp && heightDp < 480f)) NowPlayingLayout.TWO_PANE else NowPlayingLayout.SINGLE

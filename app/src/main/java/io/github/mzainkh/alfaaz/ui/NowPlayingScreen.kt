@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -102,14 +103,27 @@ fun NowPlayingScreen(graph: AppGraph, hasAccess: Boolean, onSettings: () -> Unit
     val accent by animateColorAsState(art?.accent?.let(::Color) ?: DefaultAccent, tween(600), label = "accent")
 
     MaterialTheme(colorScheme = MaterialTheme.colorScheme.copy(primary = accent, onPrimary = Color.Black)) {
-        Box(Modifier.fillMaxSize()) {
+        BoxWithConstraints(Modifier.fillMaxSize()) {
+            val layout = nowPlayingLayout(maxWidth.value, maxHeight.value)
             Backdrop(art)
             Column(Modifier.fillMaxSize().safeDrawingPadding()) {
                 TopBar(ui, onSettings)
                 if (!hasAccess) PermissionCard()
-                if (state.trackKey != null) TrackHeader(ui)
-                LyricsPane(ui, Modifier.weight(1f).fillMaxWidth())
-                if (state.trackKey != null) PlayerPanel(ui)
+                when {
+                    state.trackKey == null -> LyricsPane(ui, Modifier.weight(1f).fillMaxWidth())
+                    layout == NowPlayingLayout.TWO_PANE -> Row(Modifier.weight(1f)) {
+                        Column(Modifier.weight(0.45f).fillMaxHeight()) {
+                            TrackHeader(ui, Modifier.weight(1f), large = true)
+                            PlayerPanel(ui)
+                        }
+                        LyricsPane(ui, Modifier.weight(0.55f).fillMaxHeight())
+                    }
+                    else -> {
+                        TrackHeader(ui)
+                        LyricsPane(ui, Modifier.weight(1f).fillMaxWidth())
+                        PlayerPanel(ui)
+                    }
+                }
             }
         }
     }
@@ -185,9 +199,18 @@ private fun TopBar(ui: NowPlayingUi, onSettings: () -> Unit) {
 @Composable
 fun TrackHeader(ui: NowPlayingUi, modifier: Modifier = Modifier, large: Boolean = false) {
     if (large) {
-        Column(modifier.padding(horizontal = 24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            ArtImage(ui.art, Modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp)))
-            Spacer(Modifier.height(20.dp))
+        Column(
+            modifier.padding(horizontal = 24.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            // As large as the space allows, never taller than it.
+            ArtImage(
+                ui.art,
+                Modifier.weight(1f, fill = false).aspectRatio(1f, matchHeightConstraintsFirst = true)
+                    .clip(RoundedCornerShape(20.dp)),
+            )
+            Spacer(Modifier.height(16.dp))
             TrackText(ui, center = true)
         }
     } else {
@@ -248,14 +271,14 @@ private fun ArtImage(art: Artwork?, modifier: Modifier) {
         Image(
             remember(art) { art.image.asImageBitmap() },
             contentDescription = stringResource(R.string.album_art),
-            modifier = modifier.aspectRatio(1f),
+            modifier = modifier,
             contentScale = ContentScale.Crop,
         )
     } else {
         Image(
             painterResource(R.drawable.art_placeholder),
             contentDescription = null,
-            modifier = modifier.aspectRatio(1f),
+            modifier = modifier,
             contentScale = ContentScale.Crop,
         )
     }
