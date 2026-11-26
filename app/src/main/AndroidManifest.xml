@@ -46,6 +46,22 @@
             </intent-filter>
         </service>
 
+        <!-- Mirrors the player onto Android Auto's media card. Off until turned on in settings. -->
+        <service
+            android:name=".media.LyricsCardService"
+            android:enabled="false"
+            android:exported="true"
+            android:label="@string/app_name"
+            tools:ignore="ExportedService">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+            <!-- Voice requests to play arrive at the session, which passes them to the player. -->
+            <intent-filter>
+                <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH" />
+            </intent-filter>
+        </service>
+
         <service
             android:name=".car.LyricsCarAppService"
             android:exported="true"
