@@ -16,11 +16,11 @@ fun formatTime(ms: Long): String {
 }
 
 /**
- * How far to scroll so an item sits in the middle of the viewport. Offsets are in the list's own
- * coordinates, where the viewport spans [viewportStart] to [viewportEnd].
+ * How far to scroll so an item's middle sits [fraction] of the way down the viewport. Offsets are in
+ * the list's own coordinates, where the viewport spans [viewportStart] to [viewportEnd].
  */
-fun centerDelta(itemOffset: Int, itemSize: Int, viewportStart: Int, viewportEnd: Int): Float =
-    itemOffset + itemSize / 2f - (viewportStart + viewportEnd) / 2f
+fun anchorDelta(itemOffset: Int, itemSize: Int, viewportStart: Int, viewportEnd: Int, fraction: Float): Float =
+    itemOffset + itemSize / 2f - (viewportStart + (viewportEnd - viewportStart) * fraction)
 
 enum class NowPlayingLayout { SINGLE, TWO_PANE }
 

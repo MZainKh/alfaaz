@@ -1,12 +1,10 @@
 package io.github.mzainkh.alfaaz.media
 
 import android.media.session.PlaybackState
+import io.github.mzainkh.alfaaz.lyrics.BREAK_MARK
 import io.github.mzainkh.alfaaz.lyrics.Lyrics
 import io.github.mzainkh.alfaaz.state.LyricsStatus
 import io.github.mzainkh.alfaaz.state.LyricsUiState
-
-/** Stands in while no line is being sung. The LRC parser uses it for empty lines too. */
-private const val BREAK_MARK = "♪"
 
 /** The two texts on Android Auto's media card. */
 data class CardText(val line: String, val next: String)

@@ -1,7 +1,6 @@
 package io.github.mzainkh.alfaaz.lyrics
 
 object LrcParser {
-    private const val GAP = "♪"
     private val timestamp = Regex("""\[(\d{1,3}):(\d{1,2})(?:[.:](\d{1,3}))?]""")
     private val wordTimestamp = Regex("""<\d{1,3}:\d{1,2}(?:[.:]\d{1,3})?>""")
     private val offsetTag = Regex("""\[offset:\s*([+-]?\d+)\s*]""", RegexOption.IGNORE_CASE)
@@ -18,7 +17,7 @@ object LrcParser {
             // One line may carry several leading timestamps, e.g. a repeated chorus.
             val stamps = generateSequence { timestamp.matchAt(line, end)?.also { end = it.range.last + 1 } }.toList()
             if (stamps.isEmpty()) return@forEach
-            val text = line.substring(end).replace(wordTimestamp, "").replace(spaces, " ").trim().ifEmpty { GAP }
+            val text = line.substring(end).replace(wordTimestamp, "").replace(spaces, " ").trim().ifEmpty { BREAK_MARK }
             stamps.forEach { lines += LyricLine((it.toMillis() - offset).coerceAtLeast(0), text) }
         }
         lines.sortBy { it.timestampMs }

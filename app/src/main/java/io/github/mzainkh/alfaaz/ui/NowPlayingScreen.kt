@@ -301,7 +301,7 @@ fun LyricsPane(ui: NowPlayingUi, modifier: Modifier = Modifier) {
                 null
             }
             BoxWithConstraints(modifier) {
-                SyncedLyricsList(lyrics.lines, ui.activeIndex, onSeek, Modifier.fillMaxSize(), edgePadding = maxHeight * 0.4f)
+                SyncedLyricsList(lyrics.lines, ui.activeIndex, onSeek, playback, ui.state.offsetMs, maxHeight, Modifier.fillMaxSize())
             }
         }
         is Lyrics.Plain -> PlainLyricsList(lyrics.lines, modifier)

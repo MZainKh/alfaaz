@@ -2,7 +2,7 @@ package io.github.mzainkh.alfaaz
 
 import io.github.mzainkh.alfaaz.ui.NowPlayingLayout.SINGLE
 import io.github.mzainkh.alfaaz.ui.NowPlayingLayout.TWO_PANE
-import io.github.mzainkh.alfaaz.ui.centerDelta
+import io.github.mzainkh.alfaaz.ui.anchorDelta
 import io.github.mzainkh.alfaaz.ui.formatTime
 import io.github.mzainkh.alfaaz.ui.nowPlayingLayout
 import org.junit.Assert.assertEquals
@@ -18,12 +18,12 @@ class FormatTest {
     }
 
     @Test
-    fun centresItemsInTheViewport() {
+    fun bringsItemsToTheAnchor() {
         // Viewport 0..1000: an item at 0..100 must move up by 450 to be centred.
-        assertEquals(-450f, centerDelta(0, 100, 0, 1_000))
-        assertEquals(250f, centerDelta(700, 100, 0, 1_000))
-        // A top content padding of 200 shifts the viewport start to -200.
-        assertEquals(0f, centerDelta(250, 100, -200, 800))
+        assertEquals(-450f, anchorDelta(0, 100, 0, 1_000, 0.5f))
+        assertEquals(250f, anchorDelta(700, 100, 0, 1_000, 0.5f))
+        // A top content padding of 300 puts the anchor, 30% down, at offset 0.
+        assertEquals(0f, anchorDelta(-50, 100, -300, 700, 0.3f), 0.001f)
     }
 
     @Test
