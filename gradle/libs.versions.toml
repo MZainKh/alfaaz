@@ -8,6 +8,7 @@ lifecycle = "2.11.1"
 core = "1.19.1"
 room = "2.8.5"
 carApp = "1.7.0"
+palette = "1.1.0"
 retrofit = "3.0.0"
 okhttp = "4.12.0"
 serialization = "1.13.0"
@@ -21,6 +22,7 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
+androidx-palette = { module = "androidx.palette:palette", version.ref = "palette" }
 car-app = { module = "androidx.car.app:app", version.ref = "carApp" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }

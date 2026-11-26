@@ -64,6 +64,7 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.material3)
     implementation(libs.car.app)
+    implementation(libs.androidx.palette)
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
     implementation(libs.retrofit)

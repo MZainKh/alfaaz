@@ -41,10 +41,14 @@ interface LrclibApi {
 
 private const val TIMEOUT_SEC = 10L
 
-fun lrclibApi(userAgent: String, baseUrl: String = "https://lrclib.net/"): LrclibApi {
-    val client = OkHttpClient.Builder()
-        .connectTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
-        .readTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+/** Shared by all requests so they reuse connections. */
+fun httpClient(): OkHttpClient = OkHttpClient.Builder()
+    .connectTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+    .readTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+    .build()
+
+fun lrclibApi(userAgent: String, baseUrl: String = "https://lrclib.net/", http: OkHttpClient = httpClient()): LrclibApi {
+    val client = http.newBuilder()
         // LRCLIB requires every client to identify itself.
         .addInterceptor { it.proceed(it.request().newBuilder().header("User-Agent", userAgent).build()) }
         .build()

@@ -1,5 +1,6 @@
 package io.github.mzainkh.alfaaz.media
 
+import android.graphics.Bitmap
 import io.github.mzainkh.alfaaz.lyrics.TrackQuery
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,17 +25,21 @@ data class TrackPlaybackState(
 
 /**
  * Filled by the notification listener. [playback] emits when the song changes, pauses, resumes or
- * seeks; equal states are dropped. [commands] reach the player while the listener is connected.
+ * seeks; equal states are dropped. [art] says which image the player offers for the track.
+ * [commands] reach the player while the listener is connected.
  */
-open class PlayerHub : NowPlaying {
+open class PlayerHub {
     private val current = MutableStateFlow<TrackPlaybackState?>(null)
-    override val playback: StateFlow<TrackPlaybackState?> = current.asStateFlow()
+    val playback: StateFlow<TrackPlaybackState?> = current.asStateFlow()
+
+    private val currentArt = MutableStateFlow<ArtRequest<ArtSource<Bitmap>>?>(null)
+    val art: StateFlow<ArtRequest<ArtSource<Bitmap>>?> = currentArt.asStateFlow()
 
     @Volatile
     private var attached: PlayerCommands? = null
     private val target get() = attached ?: PlayerCommands.None
 
-    override val commands: PlayerCommands = object : PlayerCommands {
+    val commands: PlayerCommands = object : PlayerCommands {
         override fun play() = target.play()
         override fun pause() = target.pause()
         override fun skipToNext() = target.skipToNext()
@@ -42,8 +47,9 @@ open class PlayerHub : NowPlaying {
         override fun seekTo(positionMs: Long) = target.seekTo(positionMs)
     }
 
-    fun publish(state: TrackPlaybackState?) {
+    fun publish(state: TrackPlaybackState?, art: ArtRequest<ArtSource<Bitmap>>? = null) {
         current.value = state
+        currentArt.value = art
     }
 
     fun attach(commands: PlayerCommands) {

@@ -1,6 +1,7 @@
 package io.github.mzainkh.alfaaz.media
 
 import android.content.ComponentName
+import android.graphics.Bitmap
 import android.media.MediaMetadata
 import android.media.session.MediaController
 import android.media.session.MediaSession
@@ -11,6 +12,7 @@ import android.os.Looper
 import android.os.SystemClock
 import android.service.notification.NotificationListenerService
 import android.util.Log
+import androidx.core.graphics.get
 import io.github.mzainkh.alfaaz.BuildConfig
 import java.util.concurrent.Executors
 
@@ -133,7 +135,30 @@ class MediaSessionListenerService : NotificationListenerService() {
         )
         selected = choice?.controller?.sessionToken
         controls = choice?.controller?.transportControls
-        NowPlayingRepository.publish(choice?.trackState())
+        val track = choice?.trackState()
+        NowPlayingRepository.publish(track, track?.let { choice.metadata?.artRequest(it.query.cacheKey) })
+    }
+
+    private fun MediaMetadata.artRequest(trackKey: String): ArtRequest<ArtSource<Bitmap>>? {
+        val source = chooseArt(image = ::getBitmap, text = ::getString) ?: return null
+        val identity = when (source) {
+            is ArtSource.Image -> source.image.fingerprint()
+            is ArtSource.Link -> source.uri
+        }
+        return ArtRequest(trackKey, "$trackKey|$identity", source)
+    }
+
+    /**
+     * Players resend metadata, as new bitmap objects, for the same art. Size plus a few pixels tells a
+     * new image from a resent one without preparing it again.
+     */
+    private fun Bitmap.fingerprint(): String = try {
+        val samples = listOf(width / 2 to height / 2, width / 4 to height / 4, 3 * width / 4 to 3 * height / 4)
+            .joinToString(",") { (x, y) -> this[x, y].toString(16) }
+        "${width}x$height:$samples"
+    } catch (e: IllegalStateException) {
+        // Hardware bitmaps cannot be read here.
+        "${width}x$height@${System.identityHashCode(this)}"
     }
 
     private fun Watched.trackState(): TrackPlaybackState? {

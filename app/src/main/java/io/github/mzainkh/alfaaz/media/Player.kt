@@ -45,9 +45,12 @@ data class Transport(
     }
 }
 
-/** The followed track and a way to control its player. */
+/** The followed track, its art and a way to control its player. */
 interface NowPlaying {
     val playback: StateFlow<TrackPlaybackState?>
+
+    /** May still belong to the previous track: compare [Artwork.trackKey] before showing it. */
+    val artwork: StateFlow<Artwork?>
     val commands: PlayerCommands
 }
 
