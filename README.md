@@ -53,6 +53,9 @@ sdkmanager --sdk_root="$ANDROID_HOME" "platforms;android-37.1" "build-tools;36.0
 ./gradlew assembleDebug testDebugUnitTest lintDebug
 ```
 
+Keep the project outside folders synced by iCloud Drive or similar services. They create copies such as
+`Foo 2.class` in the build output, which breaks the build.
+
 ## Run on a phone
 
 1. Turn on USB debugging and connect the phone. On Samsung, turn off Auto Blocker if it blocks this.
@@ -64,6 +67,14 @@ sdkmanager --sdk_root="$ANDROID_HOME" "platforms;android-37.1" "build-tools;36.0
 
 3. Open Alfaaz, tap **Open settings** and allow notification access. If Android 13 or newer blocks the
    switch, open the app's *App info*, tap ⋮, choose **Allow restricted settings** and try again.
+
+   If it stays blocked, grant the same access to your own development install from the computer (use
+   `disallow_listener` to revoke it):
+
+   ```bash
+   adb shell cmd notification allow_listener io.github.mzainkh.alfaaz/io.github.mzainkh.alfaaz.media.MediaSessionListenerService
+   ```
+
 4. Play a song.
 
 ## Test the car screen (Desktop Head Unit)
@@ -120,6 +131,8 @@ come from Google Play, for example through
 - No Android Auto app category covers lyrics, and Google's car quality guidelines forbid automatically
   scrolling text. The app is declared as `IOT` for personal testing; expect a public car release to be
   rejected.
+- Android Auto 18.1 on a Galaxy S22+ does not report app-driven refresh (checked with the Desktop Head
+  Unit), so the car shows the fixed rows, not the scrolling list.
 - Ads and podcast episodes are skipped.
 - Lyrics are community-contributed and may be missing or mistimed.
 
