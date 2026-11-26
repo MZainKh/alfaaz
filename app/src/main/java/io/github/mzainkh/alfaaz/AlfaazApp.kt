@@ -34,7 +34,7 @@ class AppGraph(context: Context) {
     private val repository = LyricsRepository(LrclibClient(lrclibApi(USER_AGENT)), database.lyrics())
 
     val controller: LyricsController = withDemo(
-        RealLyricsController(NowPlayingRepository.state, repository, scope, SystemClock::elapsedRealtime),
+        RealLyricsController(NowPlayingRepository.playback, repository, scope, SystemClock::elapsedRealtime),
         settings.demoMode.state,
         scope,
     )

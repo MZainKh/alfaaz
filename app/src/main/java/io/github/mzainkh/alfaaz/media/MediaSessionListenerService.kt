@@ -12,6 +12,7 @@ import android.os.SystemClock
 import android.service.notification.NotificationListenerService
 import android.util.Log
 import io.github.mzainkh.alfaaz.BuildConfig
+import java.util.concurrent.Executors
 
 private const val TAG = "Alfaaz"
 
@@ -20,7 +21,30 @@ private const val TAG = "Alfaaz"
  * are never read.
  */
 class MediaSessionListenerService : NotificationListenerService() {
-    private class Watched(val controller: MediaController, val callback: MediaController.Callback)
+    /** Keeps the latest metadata and state from the callbacks, so publishing never asks the player again. */
+    private inner class Watched(val controller: MediaController) : MediaController.Callback() {
+        var metadata: MediaMetadata? = controller.metadata
+        var state: PlaybackState? = controller.playbackState
+
+        override fun onMetadataChanged(metadata: MediaMetadata?) {
+            if (BuildConfig.DEBUG) {
+                val id = metadata?.getString(MediaMetadata.METADATA_KEY_MEDIA_ID)
+                Log.d(TAG, "${controller.packageName} id=$id keys=${metadata?.keySet()}")
+            }
+            this.metadata = metadata
+            publish()
+        }
+
+        override fun onPlaybackStateChanged(state: PlaybackState?) {
+            this.state = state
+            publish()
+        }
+
+        override fun onSessionDestroyed() {
+            watched.remove(controller.sessionToken)?.let { controller.unregisterCallback(it) }
+            publish()
+        }
+    }
 
     private val sessions by lazy { getSystemService(MediaSessionManager::class.java) }
     private val component by lazy { ComponentName(this, javaClass) }
@@ -31,10 +55,25 @@ class MediaSessionListenerService : NotificationListenerService() {
     private var selected: MediaSession.Token? = null
     private val onSessionsChanged = MediaSessionManager.OnActiveSessionsChangedListener { watch(it.orEmpty()) }
 
+    /** Commands are binder calls to the player: run them in order, off the main thread. */
+    private val commandThread = Executors.newSingleThreadExecutor()
+
+    @Volatile
+    private var controls: MediaController.TransportControls? = null
+
+    private val commands = object : PlayerCommands {
+        override fun play() = send { play() }
+        override fun pause() = send { pause() }
+        override fun skipToNext() = send { skipToNext() }
+        override fun skipToPrevious() = send { skipToPrevious() }
+        override fun seekTo(positionMs: Long) = send { seekTo(positionMs) }
+    }
+
     override fun onListenerConnected() {
         try {
             sessions.addOnActiveSessionsChangedListener(onSessionsChanged, component, handler)
             watch(sessions.getActiveSessions(component))
+            NowPlayingRepository.attach(commands)
         } catch (e: SecurityException) {
             Log.w(TAG, "Notification access was withdrawn", e)
         }
@@ -47,12 +86,29 @@ class MediaSessionListenerService : NotificationListenerService() {
 
     override fun onDestroy() {
         release()
+        commandThread.shutdown()
         super.onDestroy()
     }
 
     private fun release() {
+        NowPlayingRepository.detach(commands)
         sessions.removeOnActiveSessionsChangedListener(onSessionsChanged)
         watch(emptyList())
+    }
+
+    private fun send(command: MediaController.TransportControls.() -> Unit) {
+        val target = controls ?: return
+        try {
+            commandThread.execute {
+                try {
+                    target.command()
+                } catch (e: RuntimeException) {
+                    Log.w(TAG, "The player rejected a command", e)
+                }
+            }
+        } catch (e: RuntimeException) {
+            Log.w(TAG, "Command after shutdown", e)
+        }
     }
 
     private fun watch(controllers: List<MediaController>) {
@@ -60,51 +116,35 @@ class MediaSessionListenerService : NotificationListenerService() {
         watched.clear()
         controllers.forEach { controller ->
             val token = controller.sessionToken
-            watched[token] = previous.remove(token) ?: Watched(controller, callbackFor(controller))
-                .also { controller.registerCallback(it.callback, handler) }
+            watched[token] = previous.remove(token)
+                ?: Watched(controller).also { controller.registerCallback(it, handler) }
         }
-        previous.values.forEach { it.controller.unregisterCallback(it.callback) }
+        previous.values.forEach { it.controller.unregisterCallback(it) }
         publish()
     }
 
-    private fun callbackFor(controller: MediaController) = object : MediaController.Callback() {
-        override fun onMetadataChanged(metadata: MediaMetadata?) {
-            if (BuildConfig.DEBUG) {
-                val id = metadata?.getString(MediaMetadata.METADATA_KEY_MEDIA_ID)
-                Log.d(TAG, "${controller.packageName} id=$id keys=${metadata?.keySet()}")
-            }
-            publish()
-        }
-
-        override fun onPlaybackStateChanged(state: PlaybackState?) = publish()
-
-        override fun onSessionDestroyed() {
-            watched.remove(controller.sessionToken)?.let { it.controller.unregisterCallback(it.callback) }
-            publish()
-        }
-    }
-
     private fun publish() {
-        val controllers = watched.values.map { it.controller }
+        val all = watched.values.toList()
         val choice = SessionSelector.select(
-            sessions = controllers,
-            previous = controllers.firstOrNull { it.sessionToken == selected },
-            packageName = { it.packageName },
-            isPlaying = { it.playbackState?.state == PlaybackState.STATE_PLAYING },
+            sessions = all,
+            previous = all.firstOrNull { it.controller.sessionToken == selected },
+            packageName = { it.controller.packageName },
+            isPlaying = { it.state?.state == PlaybackState.STATE_PLAYING },
         )
-        selected = choice?.sessionToken
+        selected = choice?.controller?.sessionToken
+        controls = choice?.controller?.transportControls
         NowPlayingRepository.publish(choice?.trackState())
     }
 
-    private fun MediaController.trackState(): TrackPlaybackState? {
+    private fun Watched.trackState(): TrackPlaybackState? {
         val data = metadata ?: return null
         val title = data.getString(MediaMetadata.METADATA_KEY_TITLE)
         val artist = data.getString(MediaMetadata.METADATA_KEY_ARTIST)
             ?: data.getString(MediaMetadata.METADATA_KEY_ALBUM_ARTIST)
         if (!TrackFilter.isSong(data.getString(MediaMetadata.METADATA_KEY_MEDIA_ID), title, artist)) return null
-        val playback = playbackState
+        val playback = state
         return TrackPlaybackState(
-            packageName = packageName,
+            packageName = controller.packageName,
             title = title!!,
             artist = artist!!,
             album = data.getString(MediaMetadata.METADATA_KEY_ALBUM)?.ifBlank { null },
@@ -114,6 +154,7 @@ class MediaSessionListenerService : NotificationListenerService() {
             // Some players never set the update time.
             updateElapsedMs = playback?.lastPositionUpdateTime?.takeIf { it > 0 } ?: SystemClock.elapsedRealtime(),
             speed = playback?.playbackSpeed ?: 1f,
+            transport = Transport.from(playback?.actions ?: 0),
         )
     }
 }
