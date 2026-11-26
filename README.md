@@ -11,11 +11,16 @@ Music or any other active media session. Lyrics come from [LRCLIB](https://lrcli
 
 - Detects the current track and follows play, pause and seek without polling.
 - Fetches synced lyrics, falls back to plain lyrics, and caches both. "Not found" is retried after a day.
-- Phone: auto-scrolling lyrics, a per-song timing offset and a refresh button.
-- Car: one update per lyric line, at most once a second.
-  - If the car reports *app-driven refresh*, a scrolling list marks the current line with `►`.
-  - Otherwise four fixed rows (*Now playing*, *Now*, *Next*, *Then*) change only their text, so the car's
-    five-screen limit is not used up.
+- Shows the album art, artist and album the player reports, and controls the player: previous, play or
+  pause, next.
+- Phone: one dark screen over the blurred album art. The current line stays in the middle; tap any line
+  to jump there (when the player allows seeking). A per-song timing offset and a refresh are at hand.
+  Turned sideways, or on a tablet, the cover and controls sit beside the lyrics.
+- Car: one update per lyric line, at most once a second. Switching to Maps and back shows the lyrics at
+  once.
+  - Most cars: a panel with the album art, four rows (*Now playing*, *Now*, *Next*, *Then*) and Pause and
+    Next buttons. Only the text changes, so the car's five-screen limit is not used up.
+  - Cars that report *app-driven refresh*: a scrolling list that marks the current line with `►`.
 
 ## Permissions and privacy
 
@@ -27,11 +32,15 @@ Music or any other active media session. Lyrics come from [LRCLIB](https://lrcli
 For each new song the app sends the title, artist, album and length to `lrclib.net`, identifying itself by
 app name and version. Lyrics are cached on the phone. There are no accounts and no analytics.
 
+Album art comes from the player. When the player offers only a web link to the image, the app downloads it
+from that link, which is the player's own image server. The app also asks Android to see which installed
+apps are media players, only to show the player's name and icon.
+
 ## Requirements
 
 - macOS or Linux, JDK 17
 - Android SDK: `platforms;android-37.1`, `build-tools;36.0.0`
-- Android 8.0 (API 26) or newer phone with Android Auto
+- Android 8.0 (API 26) or newer phone with Android Auto (car app API level 7 or newer)
 
 ## Build
 
@@ -65,7 +74,8 @@ Keep the project outside folders synced by iCloud Drive or similar services. The
    ./gradlew installDebug
    ```
 
-3. Open Alfaaz, tap **Open settings** and allow notification access. If Android 13 or newer blocks the
+3. Open Alfaaz. It starts on **Settings** until it has notification access: tap **Open settings** and allow
+   it. If Android 13 or newer blocks the
    switch, open the app's *App info*, tap ⋮, choose **Allow restricted settings** and try again.
 
    If it stays blocked, grant the same access to your own development install from the computer (use
@@ -96,8 +106,9 @@ Keep the project outside folders synced by iCloud Drive or similar services. The
 
 4. Useful head unit console commands: `restrict all` (simulate driving), `restrict none`, `night`, `day`.
 
-Debug builds have two switches under **Setup**: *Demo mode* (placeholder songs, no player needed) and
-*Fixed car rows* (force the fixed layout). `adb logcat -s Alfaaz` shows what the car host supports.
+Debug builds have two switches under **Settings** (the gear icon): *Demo mode* (a pretend player with
+placeholder songs and album art whose buttons work, no real player needed) and *Fixed car rows* (force the
+panel layout). `adb logcat -s Alfaaz` shows what the car host supports.
 
 ## Use in a real car
 
@@ -127,6 +138,12 @@ come from Google Play, for example through
    ```
 
 ## Limitations
+
+- Android Auto shows one app at a time. While Alfaaz is open, turn-by-turn directions and the music player
+  stay visible only as Android Auto's own widgets on its bar; turn them on in Android Auto's settings if you
+  don't see them. No app can place itself beside the map.
+- Android Auto draws the highlighted lyric line in its own accent colour, whatever colour the app asks for.
+- Album art is whatever the player provides; Spotify's is sometimes low resolution.
 
 - No Android Auto app category covers lyrics, and Google's car quality guidelines forbid automatically
   scrolling text. The app is declared as `IOT` for personal testing; expect a public car release to be
