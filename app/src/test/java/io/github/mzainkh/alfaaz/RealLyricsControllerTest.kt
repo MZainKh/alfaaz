@@ -100,6 +100,60 @@ class RealLyricsControllerTest {
     }
 
     @Test
+    fun aReturningScreenSkipsTheLoadingState() = runTest {
+        val controller = controller(observed = false)
+        val first = backgroundScope.launch { controller.state.collect {} }
+        play()
+        advanceTimeBy(500)
+        first.cancel()
+        advanceTimeBy(10_000)
+        val seen = mutableListOf<LyricsStatus>()
+        backgroundScope.launch { controller.state.collect { seen += it.status } }
+        runCurrent()
+        assert(seen.isNotEmpty() && seen.all { it is LyricsStatus.Ready }) { seen.toString() }
+        assertEquals(1, api.requests)
+    }
+
+    @Test
+    fun cachedLyricsSkipTheSettleWait() = runTest {
+        controller()
+        play()
+        advanceTimeBy(500)
+        val fresh = controller()
+        assert(fresh.state.value.status is LyricsStatus.Ready)
+        assertEquals(1, api.requests)
+    }
+
+    @Test
+    fun refreshKeepsTheSavedOffset() = runTest {
+        controller().also { play(); advanceTimeBy(500); it.nudgeOffset(700); runCurrent() }
+        val fresh = controller()
+        api.delayMs = 1_000
+        fresh.refresh()
+        runCurrent()
+        assertEquals(LyricsStatus.Loading, fresh.state.value.status)
+        assertEquals(700, fresh.state.value.offsetMs)
+        advanceTimeBy(1_500)
+        assert(fresh.state.value.status is LyricsStatus.Ready)
+        assertEquals(700, fresh.state.value.offsetMs)
+    }
+
+    @Test
+    fun offsetsStayWithTheirSongs() = runTest {
+        val controller = controller()
+        play("One")
+        advanceTimeBy(500)
+        controller.nudgeOffset(500)
+        play("Two")
+        advanceTimeBy(500)
+        controller.nudgeOffset(-1_000)
+        play("One")
+        assertEquals(500, controller.state.value.offsetMs)
+        assert(controller.state.value.status is LyricsStatus.Ready)
+        assertEquals(2, api.requests)
+    }
+
+    @Test
     fun staysIdleWithoutAnObserver() = runTest {
         controller(observed = false)
         play()

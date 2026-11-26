@@ -16,15 +16,17 @@ class LyricsRepository(
     /** LRCLIB asks clients to send requests one at a time. */
     private val network = Mutex()
 
+    /** Cached lyrics when usable, without touching the network. */
+    suspend fun cached(query: TrackQuery): StoredLyrics? =
+        dao.find(query.cacheKey)?.takeIf { it.isUsable() }?.toStored()
+
     /**
      * Cached lyrics when usable, otherwise a fetch. A failed or empty fetch never replaces lyrics
      * already cached. Throws [IOException] when the network is needed, fails, and nothing is cached.
      */
     suspend fun lyrics(query: TrackQuery, refresh: Boolean = false): StoredLyrics {
         val cached = dao.find(query.cacheKey)
-        if (cached != null && !refresh && (!cached.isMiss() || now() - cached.fetchedAt < MISS_TTL_MS)) {
-            return cached.toStored()
-        }
+        if (cached != null && !refresh && cached.isUsable()) return cached.toStored()
         val kept = cached?.takeUnless { it.isMiss() }
         val found = try {
             network.withLock { client.find(query) }
@@ -49,6 +51,9 @@ class LyricsRepository(
     suspend fun setOffset(trackKey: String, offsetMs: Long) = dao.setOffset(trackKey, offsetMs)
 
     private fun LyricsEntity.isMiss() = synced == null && plain == null && !instrumental
+
+    /** A miss is retried after a day. */
+    private fun LyricsEntity.isUsable() = !isMiss() || now() - fetchedAt < MISS_TTL_MS
 
     private fun LyricsEntity.toStored() = StoredLyrics(LrcParser.toLyrics(synced, plain, instrumental), offsetMs)
 }

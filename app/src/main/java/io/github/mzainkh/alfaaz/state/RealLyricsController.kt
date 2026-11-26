@@ -4,6 +4,7 @@ package io.github.mzainkh.alfaaz.state
 
 import io.github.mzainkh.alfaaz.lyrics.Lyrics
 import io.github.mzainkh.alfaaz.lyrics.LyricsRepository
+import io.github.mzainkh.alfaaz.lyrics.StoredLyrics
 import io.github.mzainkh.alfaaz.lyrics.TrackQuery
 import io.github.mzainkh.alfaaz.media.TrackPlaybackState
 import io.github.mzainkh.alfaaz.media.lyricsTicker
@@ -30,6 +31,7 @@ import kotlinx.coroutines.launch
 /** Players publish a new song's metadata in stages; waiting briefly avoids asking twice. */
 private const val SETTLE_MS = 300L
 private const val MAX_OFFSET_MS = 30_000L
+private const val MEMORY_SIZE = 8
 
 /** Does nothing, network included, unless the phone UI or the car screen is observing [state]. */
 class RealLyricsController(
@@ -44,6 +46,11 @@ class RealLyricsController(
 
     private val refreshes = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     private val edit = MutableStateFlow<OffsetEdit?>(null)
+
+    /** Recent results by track, least recently used first. */
+    private val memory = object : LinkedHashMap<String, Loaded>(16, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, Loaded>) = size > MEMORY_SIZE
+    }
 
     private val loaded: Flow<Loaded> = nowPlaying
         .map { it?.query }
@@ -70,19 +77,37 @@ class RealLyricsController(
 
     override fun resetOffset() = changeOffset { 0 }
 
+    /**
+     * Songs already shown come back from memory, so a screen that returns after [state] stopped
+     * shows its lyrics at once instead of a loading state. Only a network fetch waits [SETTLE_MS].
+     */
     private suspend fun FlowCollector<Loaded>.load(query: TrackQuery, refresh: Boolean) {
-        emit(Loaded(query.cacheKey, LyricsStatus.Loading))
-        if (!refresh) delay(SETTLE_MS)
-        val result = try {
-            val stored = repository.lyrics(query, refresh)
-            Loaded(query.cacheKey, LyricsStatus.Ready(stored.lyrics), stored.offsetMs)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            // Network, HTTP and parsing failures all end the same way: offer Refresh.
-            Loaded(query.cacheKey, LyricsStatus.Failed)
+        val key = query.cacheKey
+        val known = remembered(key)
+        if (!refresh) {
+            if (known != null) return emit(known)
+            attempt(key) { repository.cached(query) }?.let { return emit(it) }
         }
-        emit(result)
+        val offset = known?.offsetMs ?: 0
+        emit(Loaded(key, LyricsStatus.Loading, offset))
+        if (!refresh) delay(SETTLE_MS)
+        emit(attempt(key) { repository.lyrics(query, refresh) } ?: Loaded(key, LyricsStatus.Failed, offset))
+    }
+
+    /** Network, HTTP, database and parsing failures all end the same way: null, then offer Refresh. */
+    private suspend fun attempt(key: String, read: suspend () -> StoredLyrics?): Loaded? = try {
+        read()?.let { Loaded(key, LyricsStatus.Ready(it.lyrics), it.offsetMs).also(::remember) }
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        null
+    }
+
+    private fun remembered(key: String): Loaded? = synchronized(memory) { memory[key] }
+
+    private fun remember(loaded: Loaded) {
+        val key = loaded.trackKey ?: return
+        synchronized(memory) { memory[key] = loaded }
     }
 
     private fun uiStates(playback: TrackPlaybackState?, loaded: Loaded, edit: OffsetEdit?): Flow<LyricsUiState> {
@@ -111,6 +136,7 @@ class RealLyricsController(
         val from = edit.value?.takeIf { it.trackKey == key }?.offsetMs ?: shown.offsetMs
         val offset = change(from).coerceIn(-MAX_OFFSET_MS, MAX_OFFSET_MS)
         edit.value = OffsetEdit(key, offset)
+        synchronized(memory) { memory[key]?.let { memory[key] = it.copy(offsetMs = offset) } }
         scope.launch { repository.setOffset(key, offset) }
     }
 }
