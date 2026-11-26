@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Three lyric lines, the middle one active. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:pathData="M36,40h30M48,68h24"
+        android:strokeColor="#7FA6AD"
+        android:strokeLineCap="round"
+        android:strokeWidth="6" />
+    <path
+        android:pathData="M32,54h44"
+        android:strokeColor="#F2C14E"
+        android:strokeLineCap="round"
+        android:strokeWidth="9" />
+</vector>
