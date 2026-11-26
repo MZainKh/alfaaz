@@ -205,8 +205,8 @@ private fun InterludeDots(gap: Gap, active: Boolean, rtl: Boolean, playback: Tra
 
 /** Unsynced lyrics: plain, evenly lit text. */
 @Composable
-fun PlainLyricsList(lines: List<String>, modifier: Modifier = Modifier) {
-    LazyColumn(modifier, contentPadding = PaddingValues(vertical = 24.dp)) {
+fun PlainLyricsList(lines: List<String>, modifier: Modifier = Modifier, bottomPadding: Dp = 24.dp) {
+    LazyColumn(modifier, contentPadding = PaddingValues(top = 24.dp, bottom = bottomPadding)) {
         itemsIndexed(lines) { _, line ->
             Text(
                 line,

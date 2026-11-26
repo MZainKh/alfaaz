@@ -3,6 +3,7 @@ package io.github.mzainkh.alfaaz
 import io.github.mzainkh.alfaaz.ui.NowPlayingLayout.SINGLE
 import io.github.mzainkh.alfaaz.ui.NowPlayingLayout.TWO_PANE
 import io.github.mzainkh.alfaaz.ui.anchorDelta
+import io.github.mzainkh.alfaaz.ui.controlsPinned
 import io.github.mzainkh.alfaaz.ui.formatTime
 import io.github.mzainkh.alfaaz.ui.nowPlayingLayout
 import org.junit.Assert.assertEquals
@@ -33,5 +34,13 @@ class FormatTest {
         assertEquals(TWO_PANE, nowPlayingLayout(600f, 960f)) // small tablet or unfolded phone
         assertEquals(SINGLE, nowPlayingLayout(412f, 440f)) // half of a split screen
         assertEquals(SINGLE, nowPlayingLayout(599f, 900f))
+    }
+
+    @Test
+    fun hidesControlsOnlyWhileSyncedLyricsPlay() {
+        assertEquals(false, controlsPinned(playing = true, synced = true, touchExploration = false))
+        assertEquals(true, controlsPinned(playing = false, synced = true, touchExploration = false))
+        assertEquals(true, controlsPinned(playing = true, synced = false, touchExploration = false))
+        assertEquals(true, controlsPinned(playing = true, synced = true, touchExploration = true))
     }
 }
