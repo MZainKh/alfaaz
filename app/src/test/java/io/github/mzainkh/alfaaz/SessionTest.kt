@@ -42,6 +42,13 @@ class SessionTest {
     }
 
     @Test
+    fun neverFollowsOurOwnMirrorSession() {
+        val ours = "io.github.mzainkh.alfaaz"
+        val sessions = listOf(Session(ours, true), Session(spotify))
+        assertEquals(listOf(Session(spotify)), SessionSelector.others(sessions, ours) { it.pkg })
+    }
+
+    @Test
     fun filtersAdsPodcastsAndIncompleteTracks() {
         assert(TrackFilter.isSong("spotify:track:1", "Song", "Artist"))
         assert(TrackFilter.isSong(null, "Song", "Artist"))

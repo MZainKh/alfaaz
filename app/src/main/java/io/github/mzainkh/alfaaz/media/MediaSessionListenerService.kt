@@ -116,7 +116,7 @@ class MediaSessionListenerService : NotificationListenerService() {
     private fun watch(controllers: List<MediaController>) {
         val previous = LinkedHashMap(watched)
         watched.clear()
-        controllers.forEach { controller ->
+        SessionSelector.others(controllers, packageName) { it.packageName }.forEach { controller ->
             val token = controller.sessionToken
             watched[token] = previous.remove(token)
                 ?: Watched(controller).also { controller.registerCallback(it, handler) }
