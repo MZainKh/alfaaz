@@ -81,6 +81,9 @@ private val DefaultAccent = Color(0xFFFFD54F)
 private val BaseColor = Color(0xFF10343C)
 private val Dim = Color.White.copy(alpha = 0.7f)
 
+/** Tall enough for a big cover above the controls. */
+private val TALL = 600.dp
+
 /** Everything the now-playing screen shows, read once so the pieces below stay simple. */
 class NowPlayingUi(
     val state: LyricsUiState,
@@ -105,6 +108,7 @@ fun NowPlayingScreen(graph: AppGraph, hasAccess: Boolean, onSettings: () -> Unit
     MaterialTheme(colorScheme = MaterialTheme.colorScheme.copy(primary = accent, onPrimary = Color.Black)) {
         BoxWithConstraints(Modifier.fillMaxSize()) {
             val layout = nowPlayingLayout(maxWidth.value, maxHeight.value)
+            val tall = maxHeight >= TALL
             Backdrop(art)
             Column(Modifier.fillMaxSize().safeDrawingPadding()) {
                 TopBar(ui, onSettings)
@@ -112,8 +116,9 @@ fun NowPlayingScreen(graph: AppGraph, hasAccess: Boolean, onSettings: () -> Unit
                 when {
                     state.trackKey == null -> LyricsPane(ui, Modifier.weight(1f).fillMaxWidth())
                     layout == NowPlayingLayout.TWO_PANE -> Row(Modifier.weight(1f)) {
-                        Column(Modifier.weight(0.45f).fillMaxHeight()) {
-                            TrackHeader(ui, Modifier.weight(1f), large = true)
+                        Column(Modifier.weight(0.45f).fillMaxHeight(), verticalArrangement = Arrangement.Center) {
+                            // A phone turned sideways has no height to spare for a big cover.
+                            if (tall) TrackHeader(ui, Modifier.weight(1f), large = true) else TrackHeader(ui)
                             PlayerPanel(ui)
                         }
                         LyricsPane(ui, Modifier.weight(0.55f).fillMaxHeight())
@@ -156,7 +161,7 @@ fun Backdrop(art: Artwork?) {
         }
         Box(
             Modifier.fillMaxSize().background(
-                Brush.verticalGradient(0f to Color.Black.copy(alpha = 0.45f), 1f to Color.Black.copy(alpha = 0.8f)),
+                Brush.verticalGradient(0f to Color.Black.copy(alpha = 0.6f), 1f to Color.Black.copy(alpha = 0.85f)),
             ),
         )
     }

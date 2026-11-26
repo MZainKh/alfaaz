@@ -40,7 +40,7 @@
     <string name="setting_force_fixed">Fixed car rows</string>
     <string name="setting_force_fixed_hint">Use the fixed layout even if the car allows a scrolling list.</string>
     <string name="setting_demo">Demo mode</string>
-    <string name="setting_demo_hint">Debug builds: placeholder songs instead of what is playing.</string>
+    <string name="setting_demo_hint">Debug builds: a pretend player with placeholder songs and album art.</string>
 
     <string name="help_dhu_title">Test on a computer (Desktop Head Unit)</string>
     <string name="help_dhu_body">1. In Android Auto settings, tap \"Version and permission info\" 10 times.\n2. In the ⋮ menu, choose \"Start head unit server\".\n3. Connect the phone with USB debugging on. On Samsung, turn off Auto Blocker if it blocks this.\n4. On the computer run:\nadb forward tcp:5277 tcp:5277\n$ANDROID_HOME/extras/google/auto/desktop-head-unit</string>

@@ -70,7 +70,9 @@ fun SyncedLyricsList(
     }
     LaunchedEffect(listState, lines) {
         snapshotFlow { activeIndex() to holding }.collectLatest { (index, held) ->
-            if (!held && index in lines.indices) listState.centerOn(index)
+            // Before the first line is due, that line waits in the middle.
+            val target = index.coerceAtLeast(0)
+            if (!held && target in lines.indices) listState.centerOn(target)
         }
     }
 
