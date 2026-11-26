@@ -42,16 +42,25 @@ class AppGraph(context: Context) {
         .build()
     private val repository = LyricsRepository(LrclibClient(lrclibApi(USER_AGENT, http = http)), database.lyrics())
 
-    val nowPlaying: NowPlaying = object : NowPlaying {
+    private val processor = ArtworkProcessor(context, http)
+
+    private val player: NowPlaying = object : NowPlaying {
         override val playback: StateFlow<TrackPlaybackState?> = NowPlayingRepository.playback
         override val commands: PlayerCommands = NowPlayingRepository.commands
         override val artwork: StateFlow<Artwork?> =
-            ArtworkRepository(NowPlayingRepository.art, scope, ArtworkProcessor(context, http)::process).artwork
+            ArtworkRepository(NowPlayingRepository.art, scope, processor::process).artwork
     }
 
-    val controller: LyricsController = withDemo(
-        RealLyricsController(nowPlaying.playback, repository, scope, SystemClock::elapsedRealtime),
+    private val live = withDemo(
+        Live(RealLyricsController(player.playback, repository, scope, SystemClock::elapsedRealtime), player),
         settings.demoMode.state,
         scope,
+        processor::process,
     )
+
+    val controller: LyricsController = live.lyrics
+    val nowPlaying: NowPlaying = live.player
 }
+
+/** What the screens observe: the lyrics and the player they follow. */
+class Live(val lyrics: LyricsController, val player: NowPlaying)
