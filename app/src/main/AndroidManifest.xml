@@ -17,7 +17,7 @@
             android:resource="@xml/automotive_app_desc" />
         <meta-data
             android:name="androidx.car.app.minCarApiLevel"
-            android:value="6" />
+            android:value="7" />
 
         <activity
             android:name=".MainActivity"

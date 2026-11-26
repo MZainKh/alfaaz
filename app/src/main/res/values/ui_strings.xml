@@ -19,6 +19,9 @@
     <string name="tab_lyrics">Lyrics</string>
     <string name="tab_setup">Setup</string>
     <string name="action_refresh">Refresh</string>
+    <string name="action_play">Play</string>
+    <string name="action_pause">Pause</string>
+    <string name="action_next">Next</string>
     <string name="offset_earlier">Earlier</string>
     <string name="offset_later">Later</string>
     <string name="offset_value">%+.1f s</string>
