@@ -1,23 +1,20 @@
 package io.github.mzainkh.alfaaz.ui
 
 import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
+/** Always dark: the now-playing screen sits on darkened album art, and settings match it. */
 @Composable
 fun AlfaazTheme(content: @Composable () -> Unit) {
-    val dark = isSystemInDarkTheme()
     val colors = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        val context = LocalContext.current
-        if (dark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        dynamicDarkColorScheme(LocalContext.current)
     } else {
-        if (dark) darkColorScheme() else lightColorScheme()
+        darkColorScheme(primary = Color(0xFFFFD54F), onPrimary = Color.Black)
     }
     MaterialTheme(colorScheme = colors, content = content)
 }

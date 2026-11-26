@@ -4,6 +4,13 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Lets the app show the name and icon of the player it follows. -->
+    <queries>
+        <intent>
+            <action android:name="android.media.browse.MediaBrowserService" />
+        </intent>
+    </queries>
+
     <application
         android:name=".AlfaazApp"
         android:allowBackup="false"
