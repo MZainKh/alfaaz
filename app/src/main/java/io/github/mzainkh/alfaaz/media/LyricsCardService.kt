@@ -1,5 +1,8 @@
 package io.github.mzainkh.alfaaz.media
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.pm.PackageManager
 import android.media.MediaDescription
 import android.media.MediaMetadata
 import android.media.browse.MediaBrowser
@@ -32,6 +35,17 @@ private const val MIN_UPDATE_MS = 500L
 class LyricsCardService : MediaBrowserService() {
     /** What the card shows apart from the playback state. */
     private data class Card(val text: CardText, val art: Artwork?, val durationMs: Long)
+
+    companion object {
+        /** Android Auto lists Alfaaz as a music app only while this service is enabled. */
+        fun setEnabled(context: Context, enabled: Boolean) {
+            context.packageManager.setComponentEnabledSetting(
+                ComponentName(context, LyricsCardService::class.java),
+                if (enabled) PackageManager.COMPONENT_ENABLED_STATE_ENABLED else PackageManager.COMPONENT_ENABLED_STATE_DEFAULT,
+                PackageManager.DONT_KILL_APP,
+            )
+        }
+    }
 
     private val graph by lazy { (application as AlfaazApp).graph }
     private val labels by lazy { cardLabels() }

@@ -39,6 +39,8 @@
     <string name="access_app_info">Open App info</string>
     <string name="access_granted">Notification access granted.</string>
 
+    <string name="setting_card">Lyrics on media card</string>
+    <string name="setting_card_hint">Shows the current line beside Maps. In the car, pick Alfaaz from the music apps.</string>
     <string name="setting_force_fixed">Fixed car rows</string>
     <string name="setting_force_fixed_hint">Use the fixed layout even if the car allows a scrolling list.</string>
     <string name="setting_demo">Demo mode</string>

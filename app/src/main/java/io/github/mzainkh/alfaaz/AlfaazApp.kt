@@ -12,6 +12,7 @@ import io.github.mzainkh.alfaaz.lyrics.lrclibApi
 import io.github.mzainkh.alfaaz.media.Artwork
 import io.github.mzainkh.alfaaz.media.ArtworkProcessor
 import io.github.mzainkh.alfaaz.media.ArtworkRepository
+import io.github.mzainkh.alfaaz.media.LyricsCardService
 import io.github.mzainkh.alfaaz.media.NowPlaying
 import io.github.mzainkh.alfaaz.media.NowPlayingRepository
 import io.github.mzainkh.alfaaz.media.PlayerCommands
@@ -22,6 +23,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 private const val USER_AGENT = "Alfaaz/${BuildConfig.VERSION_NAME} (https://github.com/MZainKh/alfaaz)"
 
@@ -60,6 +62,10 @@ class AppGraph(context: Context) {
 
     val controller: LyricsController = live.lyrics
     val nowPlaying: NowPlaying = live.player
+
+    init {
+        scope.launch { settings.lyricsCard.state.collect { LyricsCardService.setEnabled(context, it) } }
+    }
 }
 
 /** What the screens observe: the lyrics and the player they follow. */
