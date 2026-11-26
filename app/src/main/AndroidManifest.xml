@@ -22,9 +22,6 @@
         <meta-data
             android:name="com.google.android.gms.car.application"
             android:resource="@xml/automotive_app_desc" />
-        <meta-data
-            android:name="androidx.car.app.minCarApiLevel"
-            android:value="7" />
 
         <activity
             android:name=".MainActivity"
@@ -46,7 +43,7 @@
             </intent-filter>
         </service>
 
-        <!-- Mirrors the player onto Android Auto's media card. Off until turned on in settings. -->
+        <!-- The car interface: mirrors the player onto Android Auto's media card. Off until turned on in settings. -->
         <service
             android:name=".media.LyricsCardService"
             android:enabled="false"
@@ -59,16 +56,6 @@
             <!-- Voice requests to play arrive at the session, which passes them to the player. -->
             <intent-filter>
                 <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH" />
-            </intent-filter>
-        </service>
-
-        <service
-            android:name=".car.LyricsCarAppService"
-            android:exported="true"
-            tools:ignore="ExportedService">
-            <intent-filter>
-                <action android:name="androidx.car.app.CarAppService" />
-                <category android:name="androidx.car.app.category.IOT" />
             </intent-filter>
         </service>
     </application>

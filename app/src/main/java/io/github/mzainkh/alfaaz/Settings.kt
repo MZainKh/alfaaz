@@ -9,9 +9,6 @@ import kotlinx.coroutines.flow.asStateFlow
 class Settings(context: Context) {
     private val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
 
-    /** Forces the fixed-title car layout even on hosts that allow a rolling list. */
-    val forceFixedCarRows = Flag("force_fixed_car_rows")
-
     /** Lists Alfaaz as a music app in the car, so its media card can show the lyrics. */
     val lyricsCard = Flag("lyrics_card")
 

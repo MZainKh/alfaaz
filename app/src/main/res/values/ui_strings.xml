@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- The interface is English only; just app_name is localised. -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="car_title">Lyrics</string>
-    <string name="car_now_playing">Now playing</string>
-    <string name="car_now">Now</string>
-    <string name="car_next">Next</string>
-    <string name="car_then">Then</string>
-
     <string name="card_item">Lyrics</string>
 
     <string name="status_nothing_playing">Nothing playing</string>
@@ -41,15 +35,13 @@
 
     <string name="setting_card">Lyrics on media card</string>
     <string name="setting_card_hint">Shows the current line beside Maps. In the car, pick Alfaaz from the music apps.</string>
-    <string name="setting_force_fixed">Fixed car rows</string>
-    <string name="setting_force_fixed_hint">Use the fixed layout even if the car allows a scrolling list.</string>
     <string name="setting_demo">Demo mode</string>
     <string name="setting_demo_hint">Debug builds: a pretend player with placeholder songs and album art.</string>
 
     <string name="help_dhu_title">Test on a computer (Desktop Head Unit)</string>
     <string name="help_dhu_body">1. In Android Auto settings, tap \"Version and permission info\" 10 times.\n2. In the ⋮ menu, choose \"Start head unit server\".\n3. Connect the phone with USB debugging on. On Samsung, turn off Auto Blocker if it blocks this.\n4. On the computer run:\nadb forward tcp:5277 tcp:5277\n$ANDROID_HOME/extras/google/auto/desktop-head-unit</string>
     <string name="help_car_title">Use it in a real car</string>
-    <string name="help_car_body">Android Auto\'s \"Unknown sources\" switch does not apply to apps like this one. Install it through Google Play, for example with Internal App Sharing.</string>
+    <string name="help_car_body">For a build you installed yourself, turn on \"Unknown sources\" in Android Auto\'s developer settings. Then turn on \"Lyrics on media card\" here and pick Alfaaz from the car\'s music apps.</string>
     <string name="help_safety_title">Safety</string>
     <string name="help_safety_body">Don\'t read lyrics while driving. The car screen is for passengers or a parked car.</string>
 </resources>

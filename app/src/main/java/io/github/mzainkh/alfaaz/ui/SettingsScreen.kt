@@ -108,7 +108,6 @@ private fun SettingsContent(settings: Settings, hasAccess: Boolean, modifier: Mo
             PermissionCard()
         }
         SwitchRow(R.string.setting_card, R.string.setting_card_hint, settings.lyricsCard)
-        SwitchRow(R.string.setting_force_fixed, R.string.setting_force_fixed_hint, settings.forceFixedCarRows)
         if (BuildConfig.DEBUG) {
             SwitchRow(R.string.setting_demo, R.string.setting_demo_hint, settings.demoMode)
         }
