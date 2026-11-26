@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The interface is English only; just app_name is localised. -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="car_title">Lyrics</string>
+    <string name="car_now_playing">Now playing</string>
+    <string name="car_now">Now</string>
+    <string name="car_next">Next</string>
+    <string name="car_then">Then</string>
+
+    <string name="status_nothing_playing">Nothing playing</string>
+    <string name="status_loading">Loading lyrics…</string>
+    <string name="status_failed">Couldn\'t reach LRCLIB</string>
+    <string name="status_not_found">No lyrics found</string>
+    <string name="status_instrumental">Instrumental</string>
+    <string name="status_unsynced">Unsynced lyrics, see phone</string>
+
+    <string name="setting_force_fixed">Fixed car rows</string>
+    <string name="setting_force_fixed_hint">Use the fixed layout even if the car allows a scrolling list.</string>
+</resources>
