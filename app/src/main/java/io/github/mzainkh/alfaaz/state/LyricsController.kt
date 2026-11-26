@@ -1,7 +1,6 @@
 package io.github.mzainkh.alfaaz.state
 
 import io.github.mzainkh.alfaaz.lyrics.Lyrics
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 sealed interface LyricsStatus {
@@ -27,8 +26,4 @@ interface LyricsController {
     fun refresh() {}
     fun nudgeOffset(deltaMs: Long) {}
     fun resetOffset() {}
-}
-
-object IdleLyricsController : LyricsController {
-    override val state: StateFlow<LyricsUiState> = MutableStateFlow(LyricsUiState())
 }

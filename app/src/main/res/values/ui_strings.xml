@@ -13,7 +13,32 @@
     <string name="status_not_found">No lyrics found</string>
     <string name="status_instrumental">Instrumental</string>
     <string name="status_unsynced">Unsynced lyrics, see phone</string>
+    <string name="status_synced">Synced lyrics</string>
+    <string name="status_plain">Unsynced lyrics</string>
+
+    <string name="tab_lyrics">Lyrics</string>
+    <string name="tab_setup">Setup</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="offset_earlier">Earlier</string>
+    <string name="offset_later">Later</string>
+    <string name="offset_value">%+.1f s</string>
+
+    <string name="access_title">Notification access needed</string>
+    <string name="access_body">Android only shows an app what other apps are playing if it has notification access. Alfaaz never reads your notifications.</string>
+    <string name="access_open">Open settings</string>
+    <string name="access_restricted">Blocked or greyed out? Open App info, tap ⋮, choose \"Allow restricted settings\", then try again.</string>
+    <string name="access_app_info">Open App info</string>
+    <string name="access_granted">Notification access granted.</string>
 
     <string name="setting_force_fixed">Fixed car rows</string>
     <string name="setting_force_fixed_hint">Use the fixed layout even if the car allows a scrolling list.</string>
+    <string name="setting_demo">Demo mode</string>
+    <string name="setting_demo_hint">Debug builds: placeholder songs instead of what is playing.</string>
+
+    <string name="help_dhu_title">Test on a computer (Desktop Head Unit)</string>
+    <string name="help_dhu_body">1. In Android Auto settings, tap \"Version and permission info\" 10 times.\n2. In the ⋮ menu, choose \"Start head unit server\".\n3. Connect the phone with USB debugging on. On Samsung, turn off Auto Blocker if it blocks this.\n4. On the computer run:\nadb forward tcp:5277 tcp:5277\n$ANDROID_HOME/extras/google/auto/desktop-head-unit</string>
+    <string name="help_car_title">Use it in a real car</string>
+    <string name="help_car_body">Android Auto\'s \"Unknown sources\" switch does not apply to apps like this one. Install it through Google Play, for example with Internal App Sharing.</string>
+    <string name="help_safety_title">Safety</string>
+    <string name="help_safety_body">Don\'t read lyrics while driving. The car screen is for passengers or a parked car.</string>
 </resources>

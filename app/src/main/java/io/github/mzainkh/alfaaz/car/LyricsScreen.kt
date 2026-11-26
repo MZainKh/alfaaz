@@ -43,13 +43,13 @@ class LyricsScreen(carContext: CarContext) : Screen(carContext) {
         )
         .build()
 
-    private var rows = rowsFor(graph.controller.state.value, graph.settings.forceFixedCarRows.value)
+    private var rows = rowsFor(graph.controller.state.value, graph.settings.forceFixedCarRows.state.value)
 
     init {
         Log.i("Alfaaz", "car: api=${carContext.carAppApiLevel} appDrivenRefresh=$appDrivenRefresh listLimit=${listLimit()}")
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                combine(graph.controller.state, graph.settings.forceFixedCarRows, ::rowsFor)
+                combine(graph.controller.state, graph.settings.forceFixedCarRows.state, ::rowsFor)
                     .distinctUntilChanged()
                     .throttleLatest(MIN_REFRESH_MS)
                     .collect {
