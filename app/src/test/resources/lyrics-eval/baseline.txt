@@ -4,7 +4,7 @@ year-remaster synced
 plain-recent synced
 official-video-tag synced
 artist-in-title wrong
-topic-channel synced
+topic-channel none
 vevo-channel none
 square-tag synced
 pipe-tag synced
