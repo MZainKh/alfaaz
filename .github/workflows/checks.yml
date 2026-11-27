@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  # The branch rules require a check with exactly this name.
+  checks:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - id: gradle
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+        with:
+          cache-provider: basic
+
+      - name: Unit tests and evals
+        run: ./gradlew testDebugUnitTest --rerun
+
+      - name: Eval summary
+        if: ${{ !cancelled() }}
+        run: |
+          report=app/build/reports/lyrics-eval/replay.md
+          if [ -f "$report" ]; then cat "$report" >> "$GITHUB_STEP_SUMMARY"; fi
+
+      - name: Lint
+        if: ${{ !cancelled() && steps.gradle.outcome == 'success' }}
+        run: ./gradlew lintDebug
+
+      - name: Debug build
+        if: ${{ !cancelled() && steps.gradle.outcome == 'success' }}
+        run: ./gradlew assembleDebug
+
+      - name: Release build (R8)
+        if: ${{ !cancelled() && steps.gradle.outcome == 'success' }}
+        run: ./gradlew assembleRelease
+
+      - name: Keep the reports
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: reports
+          path: app/build/reports/
+          retention-days: 7
