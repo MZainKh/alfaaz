@@ -40,7 +40,7 @@ Android Auto decides where the card's texts go, so Alfaaz draws the lyrics onto 
 dark fade behind them. Without synced lyrics the art stays clean and the card's text says why.
 
 If the card shows the player instead of Alfaaz, reconnect the car and open Alfaaz before starting any music.
-This kept Alfaaz's card in both simulator tries; it did not help once the player had resumed by itself.
+This kept Alfaaz's card each time in the simulator; it did not help once the player had resumed by itself.
 
 ## Permissions and privacy
 
@@ -87,6 +87,30 @@ sdkmanager --sdk_root="$ANDROID_HOME" "platforms;android-37.1" "build-tools;36.0
 
 Keep the project outside folders synced by iCloud Drive or similar services. They create copies such as
 `Foo 2.class` in the build output, which breaks the build.
+
+## Checks
+
+Every pull request runs one GitHub check, `checks`: unit tests with two evals, lint, a debug build and the
+shrunk (R8) release build. Changes reach `main` only through a pull request that passes it.
+
+- **Lyrics matching.** About 30 songs, written the way players report them, are looked up against saved
+  LRCLIB replies. Each song's outcome must match `app/src/test/resources/lyrics-eval/baseline.txt`. When a
+  change in outcome is intended, replace that file with the text the failure prints. The saved replies hold
+  titles, artists and lengths, never lyrics.
+- **Car card legibility.** The car card is drawn for sample covers and invented lines with Android's own
+  graphics (Robolectric), and its contrast, text placement, right-to-left reading and glyphs are checked.
+  The first run downloads Android runtime files of several hundred megabytes.
+- **Live report.** Once a week GitHub asks the real LRCLIB for the same songs and reports the hit rate. It
+  never blocks a change.
+
+The tests run on JDK 17. To refresh the saved replies:
+
+```bash
+./gradlew testDebugUnitTest -PlyricsEval=record
+```
+
+`record` fetches only requests that have no saved reply, `record-all` fetches every reply again, and `live`
+only reports, to `app/build/reports/lyrics-eval/`.
 
 ## Run on a phone
 

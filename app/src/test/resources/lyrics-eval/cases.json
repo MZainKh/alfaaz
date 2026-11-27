@@ -1,0 +1,241 @@
+[
+    {
+        "id": "plain-album",
+        "title": "Billie Jean",
+        "artist": "Michael Jackson",
+        "album": "Thriller",
+        "durationSec": 294,
+        "expectTitle": "Billie Jean",
+        "expectArtist": "Michael Jackson"
+    },
+    {
+        "id": "remaster-suffix",
+        "title": "Bohemian Rhapsody - Remastered 2011",
+        "artist": "Queen",
+        "album": "A Night At The Opera",
+        "durationSec": 354,
+        "expectTitle": "Bohemian Rhapsody",
+        "expectArtist": "Queen"
+    },
+    {
+        "id": "year-remaster",
+        "title": "Hotel California - 2013 Remaster",
+        "artist": "Eagles",
+        "durationSec": 391,
+        "expectTitle": "Hotel California",
+        "expectArtist": "Eagles"
+    },
+    {
+        "id": "plain-recent",
+        "title": "Blinding Lights",
+        "artist": "The Weeknd",
+        "album": "After Hours",
+        "durationSec": 200,
+        "expectTitle": "Blinding Lights",
+        "expectArtist": "The Weeknd"
+    },
+    {
+        "id": "official-video-tag",
+        "title": "Shape of You (Official Video)",
+        "artist": "Ed Sheeran",
+        "durationSec": 234,
+        "expectTitle": "Shape of You",
+        "expectArtist": "Ed Sheeran"
+    },
+    {
+        "id": "artist-in-title",
+        "title": "Ed Sheeran - Perfect (Official Music Video)",
+        "artist": "Ed Sheeran",
+        "durationSec": 263,
+        "expectTitle": "Perfect",
+        "expectArtist": "Ed Sheeran"
+    },
+    {
+        "id": "topic-channel",
+        "title": "Rolling in the Deep",
+        "artist": "Adele - Topic",
+        "durationSec": 228,
+        "expectTitle": "Rolling in the Deep",
+        "expectArtist": "Adele"
+    },
+    {
+        "id": "vevo-channel",
+        "title": "Smells Like Teen Spirit",
+        "artist": "NirvanaVEVO",
+        "durationSec": 301,
+        "expectTitle": "Smells Like Teen Spirit",
+        "expectArtist": "Nirvana"
+    },
+    {
+        "id": "square-tag",
+        "title": "Believer [Official Audio]",
+        "artist": "Imagine Dragons",
+        "durationSec": 204,
+        "expectTitle": "Believer",
+        "expectArtist": "Imagine Dragons"
+    },
+    {
+        "id": "pipe-tag",
+        "title": "Heat Waves | Official Video",
+        "artist": "Glass Animals",
+        "durationSec": 238,
+        "expectTitle": "Heat Waves",
+        "expectArtist": "Glass Animals"
+    },
+    {
+        "id": "feat-in-title",
+        "title": "Despacito (feat. Daddy Yankee)",
+        "artist": "Luis Fonsi",
+        "durationSec": 228,
+        "expectTitle": "Despacito",
+        "expectArtist": "Luis Fonsi"
+    },
+    {
+        "id": "feat-uptown",
+        "title": "Uptown Funk (feat. Bruno Mars)",
+        "artist": "Mark Ronson",
+        "durationSec": 270,
+        "expectTitle": "Uptown Funk",
+        "expectArtist": "Mark Ronson"
+    },
+    {
+        "id": "feat-no-brackets",
+        "title": "Levitating feat. DaBaby",
+        "artist": "Dua Lipa",
+        "durationSec": 203,
+        "expectTitle": "Levitating",
+        "expectArtist": "Dua Lipa"
+    },
+    {
+        "id": "live-version",
+        "title": "Someone Like You (Live at the Royal Albert Hall)",
+        "artist": "Adele",
+        "durationSec": 317,
+        "expectTitle": "Someone Like You",
+        "expectArtist": "Adele"
+    },
+    {
+        "id": "radio-edit",
+        "title": "Counting Stars - Radio Edit",
+        "artist": "OneRepublic",
+        "durationSec": 257,
+        "expectTitle": "Counting Stars",
+        "expectArtist": "OneRepublic"
+    },
+    {
+        "id": "two-artists",
+        "title": "Señorita",
+        "artist": "Shawn Mendes, Camila Cabello",
+        "durationSec": 191,
+        "expectTitle": "Señorita",
+        "expectArtist": "Shawn Mendes"
+    },
+    {
+        "id": "accent-dropped",
+        "title": "Senorita",
+        "artist": "Shawn Mendes",
+        "durationSec": 191,
+        "expectTitle": "Señorita",
+        "expectArtist": "Shawn Mendes"
+    },
+    {
+        "id": "lower-case",
+        "title": "as it was",
+        "artist": "harry styles",
+        "durationSec": 167,
+        "expectTitle": "As It Was",
+        "expectArtist": "Harry Styles"
+    },
+    {
+        "id": "numbered-video",
+        "title": "Numb (Official Music Video) [4K UPGRADE]",
+        "artist": "Linkin Park",
+        "durationSec": 187,
+        "expectTitle": "Numb",
+        "expectArtist": "Linkin Park"
+    },
+    {
+        "id": "no-duration",
+        "title": "Clocks",
+        "artist": "Coldplay",
+        "expectTitle": "Clocks",
+        "expectArtist": "Coldplay"
+    },
+    {
+        "id": "duration-off",
+        "title": "Stay With Me",
+        "artist": "Sam Smith",
+        "durationSec": 205,
+        "expectTitle": "Stay With Me",
+        "expectArtist": "Sam Smith"
+    },
+    {
+        "id": "hindi-romanized",
+        "title": "Tum Hi Ho",
+        "artist": "Arijit Singh",
+        "album": "Aashiqui 2",
+        "durationSec": 262,
+        "expectTitle": "Tum Hi Ho",
+        "expectArtist": "Arijit Singh"
+    },
+    {
+        "id": "film-suffix",
+        "title": "Kesariya (From \"Brahmastra\")",
+        "artist": "Pritam, Arijit Singh",
+        "durationSec": 268,
+        "expectTitle": "Kesariya",
+        "expectArtist": "Arijit Singh"
+    },
+    {
+        "id": "channa",
+        "title": "Channa Mereya",
+        "artist": "Arijit Singh",
+        "durationSec": 289,
+        "expectTitle": "Channa Mereya",
+        "expectArtist": "Arijit Singh"
+    },
+    {
+        "id": "coke-studio",
+        "title": "Pasoori",
+        "artist": "Ali Sethi, Shae Gill",
+        "durationSec": 224,
+        "expectTitle": "Pasoori",
+        "expectArtist": "Ali Sethi"
+    },
+    {
+        "id": "arabic-script",
+        "title": "تملي معاك",
+        "artist": "عمرو دياب",
+        "durationSec": 267,
+        "expectTitle": "تملي معاك",
+        "expectArtist": "عمرو دياب"
+    },
+    {
+        "id": "arabic-romanized",
+        "title": "Tamally Maak",
+        "artist": "Amr Diab",
+        "durationSec": 267,
+        "expectTitle": "Tamally Maak",
+        "expectArtist": "Amr Diab"
+    },
+    {
+        "id": "arabic-three",
+        "title": "3 دقات",
+        "artist": "أبو",
+        "durationSec": 256,
+        "expectTitle": "3 دقات",
+        "expectArtist": "أبو"
+    },
+    {
+        "id": "none-podcast",
+        "title": "Episode 214: A long interview about gardening",
+        "artist": "The Allotment Hour",
+        "durationSec": 3120
+    },
+    {
+        "id": "none-invented",
+        "title": "Zzqx Lantern Placeholder Song 9138",
+        "artist": "The Placeholder Quartet",
+        "durationSec": 181
+    }
+]
