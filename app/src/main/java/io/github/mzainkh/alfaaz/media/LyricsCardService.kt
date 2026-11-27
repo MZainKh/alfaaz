@@ -16,10 +16,13 @@ import io.github.mzainkh.alfaaz.AlfaazApp
 import io.github.mzainkh.alfaaz.R
 import io.github.mzainkh.alfaaz.state.LyricsUiState
 import io.github.mzainkh.alfaaz.throttleLatest
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 private const val TAG = "Alfaaz"
@@ -59,13 +62,16 @@ class LyricsCardService : MediaBrowserService() {
         sessionToken = session.sessionToken
         val player = graph.nowPlaying
         // Android Auto reads the session as soon as it connects, so fill it before that.
-        showCard(card(graph.controller.state.value, player.playback.value, player.artwork.value))
+        session.setMetadata(metadata(card(graph.controller.state.value, player.playback.value, player.artwork.value)))
         showPlayback(player.playback.value)
         scope.launch {
             combine(graph.controller.state, player.playback, player.artwork, ::card)
                 .distinctUntilChanged()
                 .throttleLatest(MIN_UPDATE_MS)
-                .collect { showCard(it) }
+                .map(::metadata)
+                // Drawing the artwork stays off the main thread.
+                .flowOn(Dispatchers.Default)
+                .collect { session.setMetadata(it) }
         }
         scope.launch { player.playback.collect { showPlayback(it) } }
     }
@@ -98,15 +104,19 @@ class LyricsCardService : MediaBrowserService() {
         playback?.durationMs ?: 0,
     )
 
-    private fun showCard(card: Card) {
+    private fun metadata(card: Card): MediaMetadata {
+        val text = card.text
         val metadata = MediaMetadata.Builder()
-            .putString(MediaMetadata.METADATA_KEY_TITLE, card.text.line)
-            .putString(MediaMetadata.METADATA_KEY_ARTIST, card.text.next)
-            .putString(MediaMetadata.METADATA_KEY_DISPLAY_TITLE, card.text.line)
-            .putString(MediaMetadata.METADATA_KEY_DISPLAY_SUBTITLE, card.text.next)
+            .putString(MediaMetadata.METADATA_KEY_TITLE, text.title)
+            .putString(MediaMetadata.METADATA_KEY_ARTIST, text.subtitle)
+            .putString(MediaMetadata.METADATA_KEY_DISPLAY_TITLE, text.title)
+            .putString(MediaMetadata.METADATA_KEY_DISPLAY_SUBTITLE, text.subtitle)
             .putLong(MediaMetadata.METADATA_KEY_DURATION, card.durationMs)
-        card.art?.let { metadata.putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, it.car) }
-        session.setMetadata(metadata.build())
+        val image = card.art?.image
+        if (image != null || text.line.isNotEmpty()) {
+            metadata.putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, drawCardArt(image, text.line, text.next))
+        }
+        return metadata.build()
     }
 
     private fun showPlayback(playback: TrackPlaybackState?) {

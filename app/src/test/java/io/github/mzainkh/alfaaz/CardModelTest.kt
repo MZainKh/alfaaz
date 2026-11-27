@@ -18,19 +18,27 @@ class CardModelTest {
     private fun text(status: LyricsStatus, index: Int = -1) =
         cardText(LyricsUiState("k", "Song", "Artist", status = status, activeIndex = index), labels)
 
+    private fun singing(line: String, next: String = "") = CardText(line, "Song · Artist", line, next)
+
     @Test
-    fun showsTheCurrentLineAndTheNextOne() {
-        assertEquals(CardText("L1", "L2"), text(synced, 1))
-        assertEquals(CardText("L2", ""), text(synced, 2))
+    fun showsTheCurrentLineBrightAndOverTheArt() {
+        assertEquals(singing("L1", "L2"), text(synced, 1))
+        assertEquals(singing("L2"), text(synced, 2))
     }
 
     @Test
     fun marksTheWaitBeforeTheFirstLine() {
-        assertEquals(CardText("♪", "L0"), text(synced, -1))
+        assertEquals(singing("♪", "L0"), text(synced, -1))
     }
 
     @Test
-    fun withoutSyncedLyricsShowsTheSongAndWhy() {
+    fun leavesOutAMissingArtist() {
+        val state = LyricsUiState("k", "Song", status = synced, activeIndex = 0)
+        assertEquals("Song", cardText(state, labels).subtitle)
+    }
+
+    @Test
+    fun withoutSyncedLyricsShowsTheSongAndWhyAndKeepsTheArtClean() {
         assertEquals(CardText("Song", "Loading"), text(LyricsStatus.Loading))
         assertEquals(CardText("Song", "Failed"), text(LyricsStatus.Failed))
         assertEquals(CardText("Song", "Plain"), text(LyricsStatus.Ready(Lyrics.Plain(listOf("x")))))

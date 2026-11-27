@@ -21,9 +21,10 @@ Music or any other active media session. Lyrics come from [LRCLIB](https://lrcli
     playback is paused, when the lyrics are not synced and with TalkBack on.
   - A per-song timing offset and a refresh are at hand. Turned sideways, or on a tablet, the cover and
     controls sit beside the lyrics.
-- Car: lyrics on Android Auto's media card, beside the map or in its full *Now playing* view. The card shows
-  the line being sung with the next one below it, and its buttons control the real player. See
-  [Lyrics in the car](#lyrics-in-the-car).
+- Car: lyrics on Android Auto's media card, beside the map or in its full *Now playing* view. The line being
+  sung is drawn large over the middle of the album art, with the next one small and faded below it, and
+  repeated in the card's bright text with the song and artist underneath. The buttons control the real player.
+  See [Lyrics in the car](#lyrics-in-the-car).
 
 ## Lyrics in the car
 
@@ -34,6 +35,12 @@ Music or any other active media session. Lyrics come from [LRCLIB](https://lrcli
 Alfaaz publishes its own media session that mirrors the player. It plays no sound, takes no audio focus and
 passes play, pause, skip and seek on to the real player. To switch between the card beside the map and the
 full view, use Android Auto's own buttons. With the setting off, Alfaaz is not listed in the car.
+
+Android Auto decides where the card's texts go, so Alfaaz draws the lyrics onto the album art, with a soft
+dark fade behind them. Without synced lyrics the art stays clean and the card's text says why.
+
+If the card shows the player instead of Alfaaz, reconnect the car and open Alfaaz before starting any music.
+This kept Alfaaz's card in both simulator tries; it did not help once the player had resumed by itself.
 
 ## Permissions and privacy
 
@@ -167,6 +174,9 @@ The alternative is to install from Google Play, for example through
 - Android Auto offers apps no lyrics slot beside the map. Using the media card this way is not documented by
   Google and may stop working.
 - Android Auto lists one entry per app, so Alfaaz has no separate full-screen car app.
+- The middle lyrics are part of a picture. Their size follows the card's artwork, and beside the map they
+  look grey because Android Auto dims it. The line at the bottom stays bright. In the full view the current
+  line shows twice.
 - Apps that log listening history may record lyric lines as song names.
 - Album art is whatever the player provides; Spotify's is sometimes low resolution.
 - Google's car quality guidelines forbid automatically scrolling text, and this card is not a real music

@@ -6,8 +6,11 @@ import io.github.mzainkh.alfaaz.lyrics.Lyrics
 import io.github.mzainkh.alfaaz.state.LyricsStatus
 import io.github.mzainkh.alfaaz.state.LyricsUiState
 
-/** The two texts on Android Auto's media card. */
-data class CardText(val line: String, val next: String)
+/**
+ * Android Auto's media card. [title] and [subtitle] are its own bright texts at the bottom; [line] and
+ * [next] are drawn into the middle of its artwork.
+ */
+data class CardText(val title: String, val subtitle: String, val line: String = "", val next: String = "")
 
 data class CardLabels(
     val appName: String,
@@ -19,7 +22,10 @@ data class CardLabels(
     val unsynced: String,
 )
 
-/** The line being sung and the one after it; without synced lyrics, the song and why there are none. */
+/**
+ * The line being sung, bright at the bottom and again over the art with the one after it. Without synced
+ * lyrics the art stays clean, and the texts give the song and why.
+ */
 fun cardText(state: LyricsUiState, labels: CardLabels): CardText {
     fun song(why: String) = CardText(state.title, why)
     return when (val status = state.status) {
@@ -27,10 +33,15 @@ fun cardText(state: LyricsUiState, labels: CardLabels): CardText {
         LyricsStatus.Loading -> song(labels.loading)
         LyricsStatus.Failed -> song(labels.failed)
         is LyricsStatus.Ready -> when (val lyrics = status.lyrics) {
-            is Lyrics.Synced -> CardText(
-                lyrics.lines.getOrNull(state.activeIndex)?.text ?: BREAK_MARK,
-                lyrics.lines.getOrNull(state.activeIndex + 1)?.text.orEmpty(),
-            )
+            is Lyrics.Synced -> {
+                val line = lyrics.lines.getOrNull(state.activeIndex)?.text ?: BREAK_MARK
+                CardText(
+                    title = line,
+                    subtitle = listOf(state.title, state.artist).filter { it.isNotBlank() }.joinToString(" · "),
+                    line = line,
+                    next = lyrics.lines.getOrNull(state.activeIndex + 1)?.text.orEmpty(),
+                )
+            }
             is Lyrics.Plain -> song(labels.unsynced)
             Lyrics.Instrumental -> song(labels.instrumental)
             Lyrics.NotFound -> song(labels.notFound)

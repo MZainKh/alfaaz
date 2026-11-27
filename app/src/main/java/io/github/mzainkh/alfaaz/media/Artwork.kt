@@ -19,7 +19,6 @@ import okio.source
 import java.io.IOException
 
 private const val PHONE_PX = 512
-private const val CAR_PX = 256
 private const val BACKDROP_PX = 32
 private const val BLUR_RADIUS = 2
 private const val MAX_BYTES = 8L * 1024 * 1024
@@ -32,8 +31,6 @@ class Artwork(
     val trackKey: String,
     /** At most [PHONE_PX] on its longest side. */
     val image: Bitmap,
-    /** Small and without alpha: the car screen resends it on every update. */
-    val car: Bitmap,
     /** A tiny blurred copy; drawn enlarged with smoothing it gives a soft background. */
     val backdrop: Bitmap,
     /** A colour from the art that reads well on a dark background. */
@@ -51,7 +48,6 @@ class ArtworkProcessor(private val context: Context, private val http: OkHttpCli
         Artwork(
             trackKey = request.trackKey,
             image = image,
-            car = scaled(source, CAR_PX, Bitmap.Config.RGB_565),
             backdrop = blurred(image),
             accent = Palette.from(image).generate().let { it.vibrantSwatch ?: it.dominantSwatch }
                 ?.rgb?.let(::readableAccent),
