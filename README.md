@@ -5,7 +5,7 @@ Music or any other active media session. Lyrics come from [LRCLIB](https://lrcli
 
 *Alfaaz* (الفاظ) is Urdu, from the Arabic *alfāẓ*, "words".
 
-**Safety:** do not read lyrics while driving. The car screen is for passengers or a parked car.
+**Safety:** do not read lyrics while driving. The lyrics on the car screen are for passengers or a parked car.
 
 ## What it does
 
@@ -13,14 +13,27 @@ Music or any other active media session. Lyrics come from [LRCLIB](https://lrcli
 - Fetches synced lyrics, falls back to plain lyrics, and caches both. "Not found" is retried after a day.
 - Shows the album art, artist and album the player reports, and controls the player: previous, play or
   pause, next.
-- Phone: one dark screen over the blurred album art. The current line stays in the middle; tap any line
-  to jump there (when the player allows seeking). A per-song timing offset and a refresh are at hand.
-  Turned sideways, or on a tablet, the cover and controls sit beside the lyrics.
-- Car: one update per lyric line, at most once a second. Switching to Maps and back shows the lyrics at
-  once.
-  - Most cars: a panel with the album art, four rows (*Now playing*, *Now*, *Next*, *Then*) and Pause and
-    Next buttons. Only the text changes, so the car's five-screen limit is not used up.
-  - Cars that report *app-driven refresh*: a scrolling list that marks the current line with `►`.
+- Phone: large lyrics over the blurred album art, in the manner of a music player.
+  - The current line is sharp near the top; the others dim with distance, and blur on Android 12 or newer.
+    Each line starts from its own reading side. Dots fill during long pauses in the singing.
+  - Tap a line to jump there (when the player allows seeking).
+  - While synced lyrics play, the controls fade after a few seconds; tap to bring them back. They stay when
+    playback is paused, when the lyrics are not synced and with TalkBack on.
+  - A per-song timing offset and a refresh are at hand. Turned sideways, or on a tablet, the cover and
+    controls sit beside the lyrics.
+- Car: lyrics on Android Auto's media card, beside the map or in its full *Now playing* view. The card shows
+  the line being sung with the next one below it, and its buttons control the real player. See
+  [Lyrics in the car](#lyrics-in-the-car).
+
+## Lyrics in the car
+
+1. On the phone, open Alfaaz's **Settings** and turn on **Lyrics on media card** (off by default).
+2. Start a song in Spotify or YouTube Music.
+3. On the car screen, pick **Alfaaz** from the music apps.
+
+Alfaaz publishes its own media session that mirrors the player. It plays no sound, takes no audio focus and
+passes play, pause, skip and seek on to the real player. To switch between the card beside the map and the
+full view, use Android Auto's own buttons. With the setting off, Alfaaz is not listed in the car.
 
 ## Permissions and privacy
 
@@ -28,6 +41,9 @@ Music or any other active media session. Lyrics come from [LRCLIB](https://lrcli
 |---|---|
 | Internet | Query LRCLIB. |
 | Notification access (granted in system settings) | The only way Android lets an app see other apps' media sessions. Notifications are never read. |
+
+With **Lyrics on media card** on, Alfaaz also runs a media browser service that other apps can see. It
+answers only Android Auto and refuses everyone else.
 
 For each new song the app sends the title, artist, album and length to `lrclib.net`, identifying itself by
 app name and version. Lyrics are cached on the phone. There are no accounts and no analytics.
@@ -40,7 +56,7 @@ apps are media players, only to show the player's name and icon.
 
 - macOS or Linux, JDK 17
 - Android SDK: `platforms;android-37.1`, `build-tools;36.0.0`
-- Android 8.0 (API 26) or newer phone with Android Auto (car app API level 7 or newer)
+- Android 8.0 (API 26) or newer phone; Android Auto for the car
 
 ## Build
 
@@ -87,7 +103,7 @@ Keep the project outside folders synced by iCloud Drive or similar services. The
 
 4. Play a song.
 
-## Test the car screen (Desktop Head Unit)
+## Test in the car simulator (Desktop Head Unit)
 
 1. Install the head unit simulator:
 
@@ -104,16 +120,21 @@ Keep the project outside folders synced by iCloud Drive or similar services. The
    "$ANDROID_HOME/extras/google/auto/desktop-head-unit"
    ```
 
-4. Useful head unit console commands: `restrict all` (simulate driving), `restrict none`, `night`, `day`.
+4. Turn on **Unknown sources** in Android Auto's developer settings, then follow
+   [Lyrics in the car](#lyrics-in-the-car).
 
-Debug builds have two switches under **Settings** (the gear icon): *Demo mode* (a pretend player with
-placeholder songs and album art whose buttons work, no real player needed) and *Fixed car rows* (force the
-panel layout). `adb logcat -s Alfaaz` shows what the car host supports.
+Useful head unit console commands: `restrict all` (simulate driving), `restrict none`, `night`, `day`.
+
+Debug builds have a *Demo mode* switch under **Settings** (the gear icon): a pretend player with placeholder
+songs and album art whose buttons work, no real player needed. `adb logcat -s Alfaaz` shows when Android Auto
+connects to the card.
 
 ## Use in a real car
 
-Android Auto's *Unknown sources* switch does not apply to apps built with the Car App Library. The app must
-come from Google Play, for example through
+For a build you installed yourself, turn on **Unknown sources** in Android Auto's developer settings. This
+has not been tried in a real car yet.
+
+The alternative is to install from Google Play, for example through
 [Internal App Sharing](https://developer.android.com/training/cars/testing).
 
 1. Create an upload keystore outside the repository:
@@ -139,17 +160,17 @@ come from Google Play, for example through
 
 ## Limitations
 
-- Android Auto shows one app at a time. While Alfaaz is open, turn-by-turn directions and the music player
-  stay visible only as Android Auto's own widgets on its bar; turn them on in Android Auto's settings if you
-  don't see them. No app can place itself beside the map.
-- Android Auto draws the highlighted lyric line in its own accent colour, whatever colour the app asks for.
+- Android Auto may keep showing the real player's card instead of Alfaaz's, especially after reconnecting.
+  This happened with YouTube Music, and picking Alfaaz again did not bring its card back.
+- The card has been tried in the head unit simulator with YouTube Music. It has not been tried with Spotify
+  or in a real car.
+- Android Auto offers apps no lyrics slot beside the map. Using the media card this way is not documented by
+  Google and may stop working.
+- Android Auto lists one entry per app, so Alfaaz has no separate full-screen car app.
+- Apps that log listening history may record lyric lines as song names.
 - Album art is whatever the player provides; Spotify's is sometimes low resolution.
-
-- No Android Auto app category covers lyrics, and Google's car quality guidelines forbid automatically
-  scrolling text. The app is declared as `IOT` for personal testing; expect a public car release to be
-  rejected.
-- Android Auto 18.1 on a Galaxy S22+ does not report app-driven refresh (checked with the Desktop Head
-  Unit), so the car shows the fixed rows, not the scrolling list.
+- Google's car quality guidelines forbid automatically scrolling text, and this card is not a real music
+  player. Expect a public car release to be rejected.
 - Ads and podcast episodes are skipped.
 - Lyrics are community-contributed and may be missing or mistimed.
 
