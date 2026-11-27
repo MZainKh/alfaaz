@@ -1,5 +1,8 @@
 package io.github.mzainkh.alfaaz.lyrics
 
+/** The text of a timestamped line with nothing sung on it. */
+const val BREAK_MARK = "♪"
+
 data class LyricLine(val timestampMs: Long, val text: String)
 
 sealed interface Lyrics {

@@ -1,12 +1,18 @@
 package io.github.mzainkh.alfaaz.ui
 
 import android.os.SystemClock
+import android.view.accessibility.AccessibilityManager
 import androidx.annotation.StringRes
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.aspectRatio
@@ -37,9 +43,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
@@ -52,14 +60,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -75,14 +87,29 @@ import io.github.mzainkh.alfaaz.media.seekTarget
 import io.github.mzainkh.alfaaz.state.LyricsController
 import io.github.mzainkh.alfaaz.state.LyricsStatus
 import io.github.mzainkh.alfaaz.state.LyricsUiState
+import kotlinx.coroutines.delay
 
 private const val OFFSET_STEP_MS = 500L
+private const val HIDE_AFTER_MS = 4_000L
 private val DefaultAccent = Color(0xFFFFD54F)
 private val BaseColor = Color(0xFF10343C)
 private val Dim = Color.White.copy(alpha = 0.7f)
+private val PanelScrim = Brush.verticalGradient(listOf(Color.Transparent, Color.Black.copy(alpha = 0.85f), Color.Black.copy(alpha = 0.9f)))
 
 /** Tall enough for a big cover above the controls. */
 private val TALL = 600.dp
+
+/** Room the corner buttons need, so nothing slides under them. */
+private val ACTIONS_WIDTH = 96.dp
+private val ACTIONS_HEIGHT = 56.dp
+
+/** Room below unsynced lyrics, so their end scrolls clear of the controls laid over them. */
+private val PANEL_HEIGHT = 240.dp
+
+/** Remembers that a touch only brought the controls back, so it must not also seek. */
+class TapGate {
+    var revealing = false
+}
 
 /** Everything the now-playing screen shows, read once so the pieces below stay simple. */
 class NowPlayingUi(
@@ -92,6 +119,7 @@ class NowPlayingUi(
     val art: Artwork?,
     val controller: LyricsController,
     val commands: PlayerCommands,
+    val gate: TapGate,
 )
 
 @Composable
@@ -102,37 +130,95 @@ fun NowPlayingScreen(graph: AppGraph, hasAccess: Boolean, onSettings: () -> Unit
     val state = lyrics.value
     // The art may still belong to the previous song.
     val art = artwork?.takeIf { it.trackKey == state.trackKey }
-    val ui = NowPlayingUi(state, { lyrics.value.activeIndex }, playback, art, graph.controller, graph.nowPlaying.commands)
+    val gate = remember { TapGate() }
+    val ui = NowPlayingUi(state, { lyrics.value.activeIndex }, playback, art, graph.controller, graph.nowPlaying.commands, gate)
     val accent by animateColorAsState(art?.accent?.let(::Color) ?: DefaultAccent, tween(600), label = "accent")
 
+    // Controls come up on a touch and fade a few seconds later, unless they are needed in view.
+    val context = LocalContext.current
+    val pinned = controlsPinned(
+        playing = playback?.isPlaying == true,
+        synced = (state.status as? LyricsStatus.Ready)?.lyrics is Lyrics.Synced,
+        touchExploration = context.getSystemService(AccessibilityManager::class.java)?.isTouchExplorationEnabled == true,
+    )
+    var touches by remember { mutableIntStateOf(0) }
+    var recent by remember { mutableStateOf(true) }
+    LaunchedEffect(touches, pinned) {
+        recent = true
+        if (!pinned) {
+            delay(HIDE_AFTER_MS)
+            recent = false
+        }
+    }
+    val visible = pinned || recent
+    val visibleNow by rememberUpdatedState(visible)
+    val fade = animateFloatAsState(if (visible) 1f else 0f, tween(300), label = "controls")
+    val hideable = Modifier.hideable(visible) { fade.value }
+
     MaterialTheme(colorScheme = MaterialTheme.colorScheme.copy(primary = accent, onPrimary = Color.Black)) {
-        BoxWithConstraints(Modifier.fillMaxSize()) {
+        BoxWithConstraints(
+            Modifier.fillMaxSize().pointerInput(Unit) {
+                // Watches every touch without taking it from the lyrics or the buttons.
+                awaitEachGesture {
+                    awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+                    gate.revealing = !visibleNow
+                    touches++
+                }
+            },
+        ) {
             val layout = nowPlayingLayout(maxWidth.value, maxHeight.value)
             val tall = maxHeight >= TALL
             Backdrop(art)
-            Column(Modifier.fillMaxSize().safeDrawingPadding()) {
-                TopBar(ui, onSettings)
-                if (!hasAccess) PermissionCard()
-                when {
-                    state.trackKey == null -> LyricsPane(ui, Modifier.weight(1f).fillMaxWidth())
-                    layout == NowPlayingLayout.TWO_PANE -> Row(Modifier.weight(1f)) {
-                        Column(Modifier.weight(0.45f).fillMaxHeight(), verticalArrangement = Arrangement.Center) {
-                            // A phone turned sideways has no height to spare for a big cover.
-                            if (tall) TrackHeader(ui, Modifier.weight(1f), large = true) else TrackHeader(ui)
-                            PlayerPanel(ui)
+            Box(Modifier.fillMaxSize().safeDrawingPadding()) {
+                Column(Modifier.fillMaxSize()) {
+                    if (!hasAccess) Box(Modifier.padding(top = ACTIONS_HEIGHT)) { PermissionCard() }
+                    when {
+                        state.trackKey == null -> LyricsPane(ui, Modifier.weight(1f).fillMaxWidth())
+                        layout == NowPlayingLayout.TWO_PANE -> Row(Modifier.weight(1f)) {
+                            Column(Modifier.weight(0.45f).fillMaxHeight(), verticalArrangement = Arrangement.Center) {
+                                // A phone turned sideways has no height to spare for a big cover.
+                                if (tall) TrackHeader(ui, Modifier.weight(1f), large = true) else TrackHeader(ui)
+                                PlayerPanel(ui, hideable)
+                            }
+                            LyricsPane(ui, Modifier.weight(0.55f).fillMaxHeight())
                         }
-                        LyricsPane(ui, Modifier.weight(0.55f).fillMaxHeight())
-                    }
-                    else -> {
-                        TrackHeader(ui)
-                        LyricsPane(ui, Modifier.weight(1f).fillMaxWidth())
-                        PlayerPanel(ui)
+                        else -> {
+                            TrackHeader(ui, Modifier.padding(end = ACTIONS_WIDTH))
+                            Box(Modifier.weight(1f)) {
+                                LyricsPane(ui, Modifier.fillMaxSize(), bottomPadding = PANEL_HEIGHT)
+                                // Laid over the lyrics, so nothing moves when it goes.
+                                androidx.compose.animation.AnimatedVisibility(
+                                    visible,
+                                    Modifier.align(Alignment.BottomCenter),
+                                    enter = fadeIn(),
+                                    exit = fadeOut(),
+                                ) {
+                                    // The empty input handler keeps taps between the buttons off the lyrics behind.
+                                    PlayerPanel(ui, Modifier.background(PanelScrim).padding(top = 32.dp).pointerInput(Unit) {})
+                                }
+                            }
+                        }
                     }
                 }
+                ScreenActions(ui, onSettings, Modifier.align(Alignment.TopEnd).then(hideable))
             }
         }
     }
 }
+
+/** Fades without giving up its space; once hidden it also takes no taps. */
+private fun Modifier.hideable(visible: Boolean, alpha: () -> Float): Modifier =
+    graphicsLayer { this.alpha = alpha() }.then(
+        if (visible) {
+            Modifier
+        } else {
+            Modifier.pointerInput(Unit) {
+                awaitPointerEventScope {
+                    while (true) awaitPointerEvent(PointerEventPass.Initial).changes.forEach { it.consume() }
+                }
+            }
+        },
+    )
 
 /** Progress, transport buttons and the timing offset. */
 @Composable
@@ -167,16 +253,11 @@ fun Backdrop(art: Artwork?) {
     }
 }
 
+/** Refresh and settings, in the corner. */
 @Composable
-private fun TopBar(ui: NowPlayingUi, onSettings: () -> Unit) {
+private fun ScreenActions(ui: NowPlayingUi, onSettings: () -> Unit, modifier: Modifier) {
     var menu by remember { mutableStateOf(false) }
-    Row(Modifier.fillMaxWidth().padding(start = 20.dp, end = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            stringResource(R.string.app_name),
-            Modifier.weight(1f),
-            color = Dim,
-            style = MaterialTheme.typography.titleMedium,
-        )
+    Row(modifier.padding(top = 4.dp, end = 4.dp), verticalAlignment = Alignment.CenterVertically) {
         if (ui.state.trackKey != null) {
             Box {
                 IconButton(onClick = { menu = true }) {
@@ -200,7 +281,7 @@ private fun TopBar(ui: NowPlayingUi, onSettings: () -> Unit) {
     }
 }
 
-/** Art, title, artist and album. [large] stacks a big cover above the text (two-pane layout). */
+/** A small cover beside the song name, or with [large] a big cover above fuller details (two-pane layout). */
 @Composable
 fun TrackHeader(ui: NowPlayingUi, modifier: Modifier = Modifier, large: Boolean = false) {
     if (large) {
@@ -216,20 +297,36 @@ fun TrackHeader(ui: NowPlayingUi, modifier: Modifier = Modifier, large: Boolean 
                     .clip(RoundedCornerShape(20.dp)),
             )
             Spacer(Modifier.height(16.dp))
-            TrackText(ui, center = true)
+            TrackText(ui)
         }
     } else {
         Row(modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-            ArtImage(ui.art, Modifier.size(76.dp).clip(RoundedCornerShape(14.dp)))
-            Spacer(Modifier.width(16.dp))
-            Column(Modifier.weight(1f)) { TrackText(ui, center = false) }
+            ArtImage(ui.art, Modifier.size(48.dp).clip(RoundedCornerShape(10.dp)))
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                Text(
+                    ui.state.title,
+                    color = Color.White,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    ui.state.artist,
+                    color = Dim,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun TrackText(ui: NowPlayingUi, center: Boolean) {
-    val align = if (center) TextAlign.Center else TextAlign.Start
+private fun TrackText(ui: NowPlayingUi) {
+    val align = TextAlign.Center
     val playback = ui.playback
     Text(
         ui.state.title,
@@ -253,7 +350,7 @@ private fun TrackText(ui: NowPlayingUi, center: Boolean) {
     val app by rememberAppLabel(ui.state.sourcePackage)
     Row(
         Modifier.fillMaxWidth().padding(top = 4.dp),
-        horizontalArrangement = if (center) Arrangement.Center else Arrangement.Start,
+        horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         app.icon?.let {
@@ -291,20 +388,24 @@ private fun ArtImage(art: Artwork?, modifier: Modifier) {
 
 /** Synced lyrics, plain lyrics or a status message. */
 @Composable
-fun LyricsPane(ui: NowPlayingUi, modifier: Modifier = Modifier) {
+fun LyricsPane(ui: NowPlayingUi, modifier: Modifier = Modifier, bottomPadding: Dp = 24.dp) {
     when (val lyrics = (ui.state.status as? LyricsStatus.Ready)?.lyrics) {
         is Lyrics.Synced -> {
             val playback = ui.playback
             val onSeek = if (playback?.transport?.canSeek == true) {
-                { index: Int -> ui.commands.seekTo(seekTarget(lyrics.lines[index], ui.state.offsetMs, playback.durationMs)) }
+                { index: Int ->
+                    if (!ui.gate.revealing) {
+                        ui.commands.seekTo(seekTarget(lyrics.lines[index], ui.state.offsetMs, playback.durationMs))
+                    }
+                }
             } else {
                 null
             }
             BoxWithConstraints(modifier) {
-                SyncedLyricsList(lyrics.lines, ui.activeIndex, onSeek, Modifier.fillMaxSize(), edgePadding = maxHeight * 0.4f)
+                SyncedLyricsList(lyrics.lines, ui.activeIndex, onSeek, playback, ui.state.offsetMs, maxHeight, Modifier.fillMaxSize())
             }
         }
-        is Lyrics.Plain -> PlainLyricsList(lyrics.lines, modifier)
+        is Lyrics.Plain -> PlainLyricsList(lyrics.lines, modifier, bottomPadding)
         else -> Box(modifier.padding(24.dp), contentAlignment = Alignment.Center) {
             Text(
                 stringResource(ui.state.status.label()),
