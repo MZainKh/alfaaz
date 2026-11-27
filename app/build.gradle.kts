@@ -11,6 +11,18 @@ plugins {
 val keystore = rootProject.file("keystore.properties").takeIf { it.exists() }
     ?.let { file -> Properties().apply { file.inputStream().use(::load) } }
 
+// Opt-in modes of the lyrics eval that talk to lrclib.net: record, record-all or live.
+val lyricsEval = providers.gradleProperty("lyricsEval").orNull
+require(lyricsEval in setOf(null, "record", "record-all", "live")) { "lyricsEval must be record, record-all or live" }
+
+tasks.withType<Test>().configureEach {
+    if (lyricsEval != null) {
+        systemProperty("alfaaz.lyricsEval", lyricsEval)
+        filter.includeTestsMatching("*.LyricsEvalTest")
+        doNotTrackState("talks to lrclib.net")
+    }
+}
+
 android {
     namespace = "io.github.mzainkh.alfaaz"
     // 37.1 is required by the AndroidX libraries in use; targetSdk stays at 36.

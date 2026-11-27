@@ -1,0 +1,725 @@
+[
+    {
+        "request": "/api/get?album_name=A Night At The Opera&artist_name=Queen&duration=354&track_name=Bohemian Rhapsody",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Bohemian Rhapsody",
+                "artistName": "Queen",
+                "duration": 355.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/get?album_name=Aashiqui 2&artist_name=Arijit Singh&duration=262&track_name=Tum Hi Ho",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Tum Hi Ho",
+                "artistName": "Arijit Singh",
+                "duration": 261.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/get?album_name=After Hours&artist_name=The Weeknd&duration=200&track_name=Blinding Lights",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Blinding Lights",
+                "artistName": "The Weeknd",
+                "duration": 200.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/get?album_name=Thriller&artist_name=Michael Jackson&duration=294&track_name=Billie Jean",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Billie Jean",
+                "artistName": "Michael Jackson",
+                "duration": 294.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/get?artist_name=Adele&duration=228&track_name=Rolling in the Deep",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Rolling In The Deep",
+                "artistName": "Adele",
+                "duration": 228.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/get?artist_name=Adele&duration=317&track_name=Someone Like You (Live at the Royal Albert Hall)",
+        "status": 404
+    },
+    {
+        "request": "/api/get?artist_name=Ali Sethi, Shae Gill&duration=224&track_name=Pasoori",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Pasoori",
+                "artistName": "Ali Sethi, Shae Gill",
+                "duration": 224.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/get?artist_name=Amr Diab&duration=267&track_name=Tamally Maak",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Tamally Maak",
+                "artistName": "Amr Diab",
+                "duration": 269.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/get?artist_name=Arijit Singh&duration=289&track_name=Channa Mereya",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Channa Mereya",
+                "artistName": "Arijit Singh",
+                "duration": 289.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/get?artist_name=Coldplay&track_name=Clocks",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Clocks",
+                "artistName": "Coldplay",
+                "duration": 307.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/get?artist_name=Dua Lipa&duration=203&track_name=Levitating feat. DaBaby",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Levitating (feat. DaBaby)",
+                "artistName": "Dua Lipa",
+                "duration": 203.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/get?artist_name=Eagles&duration=391&track_name=Hotel California",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Hotel California",
+                "artistName": "Eagles",
+                "duration": 391.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/get?artist_name=Ed Sheeran&duration=234&track_name=Shape of You",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Shape of You",
+                "artistName": "Ed Sheeran",
+                "duration": 234.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/get?artist_name=Ed Sheeran&duration=263&track_name=Ed Sheeran - Perfect",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Ed Sheeran - Perfect",
+                "artistName": "Ed Sheeran",
+                "duration": 263.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/get?artist_name=Glass Animals&duration=238&track_name=Heat Waves | Official Video",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Heat Waves (Official Video)",
+                "artistName": "Glass Animals",
+                "duration": 236.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/get?artist_name=Imagine Dragons&duration=204&track_name=Believer",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Believer",
+                "artistName": "Imagine Dragons",
+                "duration": 204.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/get?artist_name=Linkin Park&duration=187&track_name=Numb",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Numb",
+                "artistName": "LINKIN PARK",
+                "duration": 186.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/get?artist_name=Luis Fonsi&duration=228&track_name=Despacito (feat. Daddy Yankee)",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Despacito (feat. Daddy Yankee)",
+                "artistName": "Luis Fonsi",
+                "duration": 228.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/get?artist_name=Mark Ronson&duration=270&track_name=Uptown Funk (feat. Bruno Mars)",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Uptown Funk (feat. Bruno Mars)",
+                "artistName": "Mark Ronson",
+                "duration": 270.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/get?artist_name=NirvanaVEVO&duration=301&track_name=Smells Like Teen Spirit",
+        "status": 404
+    },
+    {
+        "request": "/api/get?artist_name=OneRepublic&duration=257&track_name=Counting Stars - Radio Edit",
+        "status": 404
+    },
+    {
+        "request": "/api/get?artist_name=Pritam, Arijit Singh&duration=268&track_name=Kesariya (From \"Brahmastra\")",
+        "status": 404
+    },
+    {
+        "request": "/api/get?artist_name=Sam Smith&duration=205&track_name=Stay With Me",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Stay With Me",
+                "artistName": "Sam Smith",
+                "duration": 203.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/get?artist_name=Shawn Mendes&duration=191&track_name=Senorita",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Señorita",
+                "artistName": "Shawn Mendes",
+                "duration": 191.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/get?artist_name=Shawn Mendes, Camila Cabello&duration=191&track_name=Señorita",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Señorita",
+                "artistName": "Shawn Mendes & Camila Cabello",
+                "duration": 191.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/get?artist_name=The Allotment Hour&duration=3120&track_name=Episode 214: A long interview about gardening",
+        "status": 404
+    },
+    {
+        "request": "/api/get?artist_name=The Placeholder Quartet&duration=181&track_name=Zzqx Lantern Placeholder Song 9138",
+        "status": 404
+    },
+    {
+        "request": "/api/get?artist_name=harry styles&duration=167&track_name=as it was",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "As It Was",
+                "artistName": "Harry Styles",
+                "duration": 167.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/get?artist_name=أبو&duration=256&track_name=3 دقات",
+        "status": 404
+    },
+    {
+        "request": "/api/get?artist_name=عمرو دياب&duration=267&track_name=تملي معاك",
+        "status": 404
+    },
+    {
+        "request": "/api/search?artist_name=Adele&track_name=Someone Like You (Live at the Royal Albert Hall)",
+        "status": 200
+    },
+    {
+        "request": "/api/search?artist_name=NirvanaVEVO&track_name=Smells Like Teen Spirit",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Smells Like Teen Spirit",
+                "artistName": "NirvanaVEVO",
+                "duration": 278.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Smells Like Teen Spirit",
+                "artistName": "NirvanaVEVO",
+                "duration": 278.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/search?artist_name=OneRepublic&track_name=Counting Stars - Radio Edit",
+        "status": 200
+    },
+    {
+        "request": "/api/search?artist_name=Pritam, Arijit Singh&track_name=Kesariya (From \"Brahmastra\")",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Kesariya (From “Brahmastra”)",
+                "artistName": "Pritam & Arijit Singh",
+                "duration": 268.199184,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Kesariya (From “Brahmastra”)",
+                "artistName": "Pritam, Arijit Singh",
+                "duration": 268.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Kesariya (From \"Brahmastra\")",
+                "artistName": "Pritam, Arijit Singh, Amitabh Bhattacharya",
+                "duration": 268.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Kesariya (From \"Brahmastra\")",
+                "artistName": "Pritam, Arijit Singh & Amitabh Bhattacharya",
+                "duration": 268.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Kesariya (From \"Brahmastra\")",
+                "artistName": "Pritam/Arijit Singh/Amitabh Bhattacharya",
+                "duration": 268.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Kesariya (From \"Brahmastra\")",
+                "artistName": "Pritam/Arijit Singh/Amitabh Bhattacharya",
+                "duration": 268.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Kesariya (From \"Brahmastra\")",
+                "artistName": "Pritam, Arijit Singh, Amitabh Bhattacharya",
+                "duration": 268.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Kesariya (From \"Brahmastra\")",
+                "artistName": "Pritam/ Arijit Singh/ Amitabh Bhattacharya",
+                "duration": 268.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Kesariya (From \"Brahmastra\")",
+                "artistName": "Pritam/Arijit Singh/Amitabh Bhattacharya",
+                "duration": 172.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Kesariya (From \"Brahmastra\")",
+                "artistName": "Pritam, Arijit Singh & Amitabh Bhattacharya",
+                "duration": 172.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Kesariya (From \"Brahmastra\")",
+                "artistName": "Pritam, Arijit Singh, Amitabh Bhattacharya",
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Kesariya (From \"Brahmastra\")",
+                "artistName": "Amitabh Bhattacharya, Pritam, Arijit Singh",
+                "duration": 268.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Kesariya (From \"Brahmastra\")",
+                "artistName": "Pritam, Arijit Singh, Amitabh Bhattacharya",
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Kesariya (From \"Brahmastra\")",
+                "artistName": "Pritam, Arijit Singh, Amitabh Bhattacharya",
+                "duration": 195.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Kesariya (From \"Brahmastra\")",
+                "artistName": "Pritam, Arijit Singh, Amitabh Bhattacharya",
+                "duration": 201.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Kesariya (From \"Brahmastra\")",
+                "artistName": "Pritam, Arijit Singh, Amitabh Bhattacharya",
+                "duration": 200.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Kesariya (From \"Brahmastra\")",
+                "artistName": "Pritam, Arijit Singh, Amitabh Bhattacharya",
+                "duration": 193.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Kesariya (From \"Brahmastra\")",
+                "artistName": "Pritam, Arijit Singh, Amitabh Bhattacharya",
+                "duration": 197.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Kesariya (From \"Brahmastra\")",
+                "artistName": "Pritam, Arijit Singh, Amitabh Bhattacharya",
+                "duration": 196.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Kesariya (From \"Brahmastra\")",
+                "artistName": "Pritam, Arijit Singh, Amitabh Bhattacharya",
+                "duration": 202.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/search?artist_name=The Allotment Hour&track_name=Episode 214: A long interview about gardening",
+        "status": 200
+    },
+    {
+        "request": "/api/search?artist_name=The Placeholder Quartet&track_name=Zzqx Lantern Placeholder Song 9138",
+        "status": 200
+    },
+    {
+        "request": "/api/search?artist_name=أبو&track_name=3 دقات",
+        "status": 200
+    },
+    {
+        "request": "/api/search?artist_name=عمرو دياب&track_name=تملي معاك",
+        "status": 200
+    },
+    {
+        "request": "/api/search?q=Adele Someone Like You (Live at the Royal Albert Hall)",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Someone Like You [Live]",
+                "artistName": "Adele",
+                "duration": 294.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Someone Like You",
+                "artistName": "Adele",
+                "duration": 294.321633,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Someone Like You",
+                "artistName": "Adele",
+                "duration": 294.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Someone Like You",
+                "artistName": "Adele",
+                "duration": 397.300437,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Someone Like You",
+                "artistName": "Adele",
+                "duration": 381.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Someone Like You",
+                "artistName": "Adele",
+                "duration": 291.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Someone Like You (Live)",
+                "artistName": "Adele",
+                "duration": 315.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Someone Like You [Live]",
+                "artistName": "Adele",
+                "duration": 294.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Someone Like You",
+                "artistName": "Adele",
+                "duration": 285.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Someone Like You",
+                "artistName": "Adele",
+                "duration": 294.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Someone like you",
+                "artistName": "Adele",
+                "duration": 16.839344,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Someone Like You",
+                "artistName": "Adele",
+                "duration": 381.213333,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Someone Like You",
+                "artistName": "Adele",
+                "duration": 397.300437,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Someone Like You",
+                "artistName": "Adele",
+                "duration": 280.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Someone Like You",
+                "artistName": "Adele",
+                "duration": 294.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Someone Like You",
+                "artistName": "Adele",
+                "duration": 294.3216384,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Someone Like You",
+                "artistName": "Adele",
+                "duration": 294.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/search?q=NirvanaVEVO Smells Like Teen Spirit",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Smells Like Teen Spirit",
+                "artistName": "NirvanaVEVO",
+                "duration": 278.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Smells Like Teen Spirit",
+                "artistName": "NirvanaVEVO",
+                "duration": 278.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/search?q=OneRepublic Counting Stars - Radio Edit",
+        "status": 200
+    },
+    {
+        "request": "/api/search?q=The Allotment Hour Episode 214: A long interview about gardening",
+        "status": 200
+    },
+    {
+        "request": "/api/search?q=The Placeholder Quartet Zzqx Lantern Placeholder Song 9138",
+        "status": 200
+    },
+    {
+        "request": "/api/search?q=أبو 3 دقات",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "abu ft. yousra ثلاث دقات - أبو و يسرا",
+                "artistName": "3 daqat",
+                "duration": 311.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "3 Daqat - Abu Ft. Yousra  ثلاث دقات - أبو و يسرا (feat. Yousra)",
+                "artistName": "Abu",
+                "duration": 310.84,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    },
+    {
+        "request": "/api/search?q=عمرو دياب تملي معاك",
+        "status": 200,
+        "tracks": [
+            {
+                "trackName": "Tamally maak",
+                "artistName": "عمرو دياب",
+                "duration": 269.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Saaban alaya",
+                "artistName": "عمرو دياب",
+                "duration": 222.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Tamally maak",
+                "artistName": "عمرو دياب",
+                "duration": 272.0,
+                "synced": true,
+                "plain": true
+            },
+            {
+                "trackName": "Kalby ekhtarak",
+                "artistName": "عمرو دياب",
+                "duration": 253.0,
+                "plain": true
+            },
+            {
+                "trackName": "El alem alla",
+                "artistName": "عمرو دياب",
+                "duration": 247.0,
+                "synced": true,
+                "plain": true
+            }
+        ]
+    }
+]
