@@ -42,16 +42,31 @@ private const val FADE_PX = 120
 private val FADE_EASE = floatArrayOf(0f, 0.16f, 0.5f, 0.84f, 1f)
 private val PLAIN_BACKGROUND = Color.rgb(20, 24, 32)
 
+/** A block of lyric text and where its top-left corner goes on the card's picture. */
+internal class PlacedText(val layout: StaticLayout, val left: Float, val top: Float)
+
+/** The blocks of text for the middle of the card, and the height they take together. */
+internal class LyricsLayout(val texts: List<PlacedText>, val height: Int)
+
 /**
  * The card's picture: the album art, with the lyrics in its middle when there are any. Android Auto
  * fixes where the card's own texts go, so the picture is the only way to put words there.
  */
 fun drawCardArt(image: Bitmap?, line: String, next: String): Bitmap {
+    val lyrics = if (line.isEmpty()) null else layoutLyrics(line, next)
+    val art = cardBackdrop(image, lyrics?.height)
+    val canvas = Canvas(art)
+    lyrics?.texts?.forEach { text -> canvas.withTranslation(text.left, text.top) { text.layout.draw(this) } }
+    return art
+}
+
+/** The picture without its words: the art, and the fade behind a block of text [textHeight] tall. */
+internal fun cardBackdrop(image: Bitmap?, textHeight: Int?): Bitmap {
     val art = createBitmap(SIDE_PX, SIDE_PX, Bitmap.Config.RGB_565)
     val canvas = Canvas(art)
     canvas.drawColor(PLAIN_BACKGROUND)
     if (image != null) canvas.drawFilling(image)
-    if (line.isNotEmpty()) canvas.drawLyrics(line, next)
+    if (textHeight != null) canvas.drawFade(textHeight)
     return art
 }
 
@@ -68,8 +83,8 @@ private fun Canvas.drawFilling(image: Bitmap) {
     )
 }
 
-private fun Canvas.drawLyrics(line: String, next: String) {
-    // The largest text at which both lines fit.
+/** The largest text at which both lines fit, centred on the card's picture. */
+internal fun layoutLyrics(line: String, next: String): LyricsLayout {
     var size = MAX_TEXT_PX
     var texts: List<StaticLayout>
     var height: Int
@@ -83,12 +98,11 @@ private fun Canvas.drawLyrics(line: String, next: String) {
         size -= 2
     }
 
-    drawFade(height)
     var y = (SIDE_PX - height) / 2f
-    for (text in texts) {
-        withTranslation((SIDE_PX - TEXT_WIDTH_PX) / 2f, y) { text.draw(this) }
-        y += text.height + size * GAP_SCALE
+    val placed = texts.map { text ->
+        PlacedText(text, (SIDE_PX - TEXT_WIDTH_PX) / 2f, y).also { y += text.height + size * GAP_SCALE }
     }
+    return LyricsLayout(placed, height)
 }
 
 /** A dark band across the art behind a block of text [textHeight] tall, with no visible edge. */
