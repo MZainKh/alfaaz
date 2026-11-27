@@ -22,7 +22,10 @@ private const val SIDE_PX = 512
 
 /** The car crops the square art to the card's shape, so the lyrics stay within its middle. */
 private const val TEXT_WIDTH_PX = SIDE_PX / 2
-private const val TEXT_HEIGHT_PX = SIDE_PX / 2
+
+/** Arabic letters can hang a few pixels below their line, so the fit stays that far inside the middle. */
+private const val OVERHANG_PX = 8
+private const val TEXT_HEIGHT_PX = SIDE_PX / 2 - 2 * OVERHANG_PX
 
 private const val MAX_TEXT_PX = 42
 private const val MIN_TEXT_PX = 22
