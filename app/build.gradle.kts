@@ -55,6 +55,9 @@ android {
         compose = true
         buildConfig = true
     }
+
+    // The card tests draw with Android's own graphics, which needs the app's resources.
+    testOptions { unitTests { isIncludeAndroidResources = true } }
 }
 
 dependencies {
@@ -75,4 +78,5 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.okhttp.mockwebserver)
+    testImplementation(libs.robolectric)
 }
